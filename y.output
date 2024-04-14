@@ -1,0 +1,3166 @@
+State 0 conflicts: 1 shift/reduce
+State 5 conflicts: 1 shift/reduce
+State 14 conflicts: 1 shift/reduce
+State 24 conflicts: 1 shift/reduce
+State 34 conflicts: 1 shift/reduce
+State 55 conflicts: 1 shift/reduce
+State 60 conflicts: 1 shift/reduce
+State 74 conflicts: 1 shift/reduce
+State 90 conflicts: 1 shift/reduce
+State 107 conflicts: 5 shift/reduce
+State 115 conflicts: 1 shift/reduce
+State 116 conflicts: 1 shift/reduce
+State 117 conflicts: 1 shift/reduce
+State 138 conflicts: 1 shift/reduce
+State 139 conflicts: 1 shift/reduce
+State 140 conflicts: 1 shift/reduce
+State 141 conflicts: 1 shift/reduce
+State 142 conflicts: 1 shift/reduce
+State 179 conflicts: 1 shift/reduce
+State 182 conflicts: 1 shift/reduce
+State 193 conflicts: 1 shift/reduce
+State 198 conflicts: 1 shift/reduce
+State 206 conflicts: 1 shift/reduce
+State 207 conflicts: 1 shift/reduce
+State 208 conflicts: 1 shift/reduce
+State 209 conflicts: 1 shift/reduce
+State 210 conflicts: 1 shift/reduce
+State 211 conflicts: 1 shift/reduce
+State 212 conflicts: 1 shift/reduce
+
+
+Grammar
+
+    0 $accept: Program $end
+
+    1 Program: Block '.'
+
+    2 Block: ConstDecl VarDecl ArrayDecl ProcDecl FuncDecl Statement
+
+    3 ConstDecl: CONST ConstAssignmentList ';'
+    4          | ε
+    5          | error ';'
+
+    6 ConstAssignmentList: IDENTIFIER EQ NUMBER
+    7                    | ARRAY IDENTIFIER EQ '[' ConstArray ']'
+    8                    | ConstAssignmentList ',' IDENTIFIER EQ NUMBER
+    9                    | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']'
+
+   10 VarDecl: VAR IdentifierList ';'
+   11        | ε
+   12        | error ';'
+
+   13 ArrayDecl: ARRAY IdentifierList ';'
+   14          | error ';'
+   15          | ε
+
+   16 IdentifierList: IDENTIFIER
+   17               | IdentifierList ',' IDENTIFIER
+   18               | ε
+
+   19 ProcDecl: ProcDecl PROCEDURE IDENTIFIER ';' Block ';'
+   20         | error ';'
+   21         | ε
+
+   22 FuncDecl: FUNCTION IDENTIFIER '(' IdentifierList ')' ';' Block ';'
+   23         | error ';'
+   24         | ε
+
+   25 Statement: IDENTIFIER ASGN Expression
+   26          | IDENTIFIER ASGN '[' GeneralList ']'
+   27          | IDENTIFIER '[' NUMBER ']' ASGN Expression
+   28          | CALL IDENTIFIER
+   29          | FuncCall
+   30          | BEGN StatementList END
+   31          | ConditionalStatement
+   32          | LoopStatement
+   33          | ControlStatement
+   34          | IOStatement
+   35          | ε
+
+   36 ConditionalStatement: IF Condition THEN Statement
+   37                     | IF Condition THEN Statement ELSE Statement
+   38                     | error Condition THEN Statement
+   39                     | IF Condition error Statement
+   40                     | error Condition THEN Statement ELSE Statement
+   41                     | IF Condition error Statement ELSE Statement
+   42                     | IF Condition THEN Statement error Statement
+
+   43 LoopStatement: WHILE Condition DO Statement
+   44              | error Condition DO Statement
+   45              | WHILE Condition error Statement
+   46              | FOR IDENTIFIER UPTO Expression DO Statement
+   47              | FOR IDENTIFIER DOWNTO Expression DO Statement
+   48              | error Expression DO Statement
+   49              | FOR IDENTIFIER UPTO Expression error Statement
+   50              | FOR IDENTIFIER DOWNTO Expression error Statement
+
+   51 IOStatement: READ '(' IDENTIFIER ')'
+   52            | WRITE '(' IDENTIFIER ')'
+   53            | WRITELINE '(' IDENTIFIER ')'
+   54            | READ '(' error ')'
+   55            | WRITE '(' error ')'
+   56            | WRITELINE '(' error ')'
+
+   57 FuncCall: CALL IDENTIFIER '(' GeneralList ')'
+   58         | error IDENTIFIER '(' GeneralList ')'
+   59         | CALL error '(' GeneralList ')'
+   60         | CALL IDENTIFIER error GeneralList ')'
+   61         | CALL IDENTIFIER '(' GeneralList error
+
+   62 ControlStatement: BREAK
+   63                 | RETURN
+   64                 | RETURN Expression
+
+   65 StatementList: Statement
+   66              | StatementList ';' Statement
+
+   67 $@1: ε
+
+   68 StatementList: StatementList error $@1 Statement
+
+   69 Condition: ODD Expression
+   70          | Expression EQ Expression
+   71          | Expression IDK Expression
+   72          | Expression GT Expression
+   73          | Expression LT Expression
+   74          | Expression LEQ Expression
+   75          | Expression GEQ Expression
+   76          | Expression ASGN Expression
+
+   77 ConstArray: NUMBER
+   78           | ConstArray ',' NUMBER
+   79           | ConstArray error NUMBER
+
+   80 GeneralList: NUMBER
+   81            | IDENTIFIER
+   82            | GeneralList ',' NUMBER
+   83            | GeneralList ',' IDENTIFIER
+   84            | GeneralList error NUMBER
+   85            | GeneralList error IDENTIFIER
+   86            | ε
+
+   87 Expression: Expression '+' Expression
+   88           | Expression '-' Expression
+   89           | Expression '*' Expression
+   90           | Expression '/' Expression
+   91           | Expression '%' Expression
+   92           | '+' Expression
+   93           | '-' Expression
+   94           | error Expression
+   95           | IDENTIFIER
+   96           | IDENTIFIER '[' NUMBER ']'
+   97           | NUMBER
+   98           | '(' Expression ')'
+   99           | FuncCall
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '%' (37) 91
+    '(' (40) 22 51 52 53 54 55 56 57 58 59 61 98
+    ')' (41) 22 51 52 53 54 55 56 57 58 59 60 98
+    '*' (42) 89
+    '+' (43) 87 92
+    ',' (44) 8 9 17 78 82 83
+    '-' (45) 88 93
+    '.' (46) 1
+    '/' (47) 90
+    ';' (59) 3 5 10 12 13 14 19 20 22 23 66
+    '[' (91) 7 9 26 27 96
+    ']' (93) 7 9 26 27 96
+    error (256) 5 12 14 20 23 38 39 40 41 42 44 45 48 49 50 54 55 56 58 59 60 61 68 79 84 85 94
+    NUMBER (258) 6 8 27 77 78 79 80 82 84 96 97
+    IDENTIFIER (259) 6 7 8 9 16 17 19 22 25 26 27 28 46 47 49 50 51 52 53 57 58 60 61 81 83 85 95 96
+    CONST (260) 3
+    VAR (261) 10
+    ARRAY (262) 7 9 13
+    PROCEDURE (263) 19
+    FUNCTION (264) 22
+    CALL (265) 28 57 59 60 61
+    BEGN (266) 30
+    END (267) 30
+    IF (268) 36 37 39 41 42
+    THEN (269) 36 37 38 40 42
+    ELSE (270) 37 40 41
+    WHILE (271) 43 45
+    DO (272) 43 44 46 47 48
+    FOR (273) 46 47 49 50
+    UPTO (274) 46 49
+    DOWNTO (275) 47 50
+    BREAK (276) 62
+    RETURN (277) 63 64
+    READ (278) 51 54
+    WRITE (279) 52 55
+    WRITELINE (280) 53 56
+    ODD (281) 69
+    EQ (282) 6 7 8 9 70
+    IDK (283) 71
+    GT (284) 72
+    LT (285) 73
+    GEQ (286) 75
+    LEQ (287) 74
+    ASGN (288) 25 26 27 76
+    IFX (289)
+    UMINUS (290)
+    UPLUS (291)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (49)
+        on left: 0
+    Program (50)
+        on left: 1
+        on right: 0
+    Block (51)
+        on left: 2
+        on right: 1 19 22
+    ConstDecl (52)
+        on left: 3 4 5
+        on right: 2
+    ConstAssignmentList (53)
+        on left: 6 7 8 9
+        on right: 3 8 9
+    VarDecl (54)
+        on left: 10 11 12
+        on right: 2
+    ArrayDecl (55)
+        on left: 13 14 15
+        on right: 2
+    IdentifierList (56)
+        on left: 16 17 18
+        on right: 10 13 17 22
+    ProcDecl (57)
+        on left: 19 20 21
+        on right: 2 19
+    FuncDecl (58)
+        on left: 22 23 24
+        on right: 2
+    Statement (59)
+        on left: 25 26 27 28 29 30 31 32 33 34 35
+        on right: 2 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 65 66 68
+    ConditionalStatement (60)
+        on left: 36 37 38 39 40 41 42
+        on right: 31
+    LoopStatement (61)
+        on left: 43 44 45 46 47 48 49 50
+        on right: 32
+    IOStatement (62)
+        on left: 51 52 53 54 55 56
+        on right: 34
+    FuncCall (63)
+        on left: 57 58 59 60 61
+        on right: 29 99
+    ControlStatement (64)
+        on left: 62 63 64
+        on right: 33
+    StatementList (65)
+        on left: 65 66 68
+        on right: 30 66 68
+    $@1 (66)
+        on left: 67
+        on right: 68
+    Condition (67)
+        on left: 69 70 71 72 73 74 75 76
+        on right: 36 37 38 39 40 41 42 43 44 45
+    ConstArray (68)
+        on left: 77 78 79
+        on right: 7 9 78 79
+    GeneralList (69)
+        on left: 80 81 82 83 84 85 86
+        on right: 26 57 58 59 60 61 82 83 84 85
+    Expression (70)
+        on left: 87 88 89 90 91 92 93 94 95 96 97 98 99
+        on right: 25 27 46 47 48 49 50 64 69 70 71 72 73 74 75 76 87 88 89 90 91 92 93 94 98
+
+
+State 0
+
+    0 $accept: • Program $end
+
+    error  shift, and go to state 1
+    CONST  shift, and go to state 2
+
+    error       [reduce using rule 4 (ConstDecl)]
+    IDENTIFIER  reduce using rule 4 (ConstDecl)
+    VAR         reduce using rule 4 (ConstDecl)
+    ARRAY       reduce using rule 4 (ConstDecl)
+    PROCEDURE   reduce using rule 4 (ConstDecl)
+    FUNCTION    reduce using rule 4 (ConstDecl)
+    CALL        reduce using rule 4 (ConstDecl)
+    BEGN        reduce using rule 4 (ConstDecl)
+    IF          reduce using rule 4 (ConstDecl)
+    WHILE       reduce using rule 4 (ConstDecl)
+    FOR         reduce using rule 4 (ConstDecl)
+    BREAK       reduce using rule 4 (ConstDecl)
+    RETURN      reduce using rule 4 (ConstDecl)
+    READ        reduce using rule 4 (ConstDecl)
+    WRITE       reduce using rule 4 (ConstDecl)
+    WRITELINE   reduce using rule 4 (ConstDecl)
+    '.'         reduce using rule 4 (ConstDecl)
+
+    Program    go to state 3
+    Block      go to state 4
+    ConstDecl  go to state 5
+
+
+State 1
+
+    5 ConstDecl: error • ';'
+
+    ';'  shift, and go to state 6
+
+
+State 2
+
+    3 ConstDecl: CONST • ConstAssignmentList ';'
+
+    IDENTIFIER  shift, and go to state 7
+    ARRAY       shift, and go to state 8
+
+    ConstAssignmentList  go to state 9
+
+
+State 3
+
+    0 $accept: Program • $end
+
+    $end  shift, and go to state 10
+
+
+State 4
+
+    1 Program: Block • '.'
+
+    '.'  shift, and go to state 11
+
+
+State 5
+
+    2 Block: ConstDecl • VarDecl ArrayDecl ProcDecl FuncDecl Statement
+
+    error  shift, and go to state 12
+    VAR    shift, and go to state 13
+
+    error       [reduce using rule 11 (VarDecl)]
+    IDENTIFIER  reduce using rule 11 (VarDecl)
+    ARRAY       reduce using rule 11 (VarDecl)
+    PROCEDURE   reduce using rule 11 (VarDecl)
+    FUNCTION    reduce using rule 11 (VarDecl)
+    CALL        reduce using rule 11 (VarDecl)
+    BEGN        reduce using rule 11 (VarDecl)
+    IF          reduce using rule 11 (VarDecl)
+    WHILE       reduce using rule 11 (VarDecl)
+    FOR         reduce using rule 11 (VarDecl)
+    BREAK       reduce using rule 11 (VarDecl)
+    RETURN      reduce using rule 11 (VarDecl)
+    READ        reduce using rule 11 (VarDecl)
+    WRITE       reduce using rule 11 (VarDecl)
+    WRITELINE   reduce using rule 11 (VarDecl)
+    '.'         reduce using rule 11 (VarDecl)
+    ';'         reduce using rule 11 (VarDecl)
+
+    VarDecl  go to state 14
+
+
+State 6
+
+    5 ConstDecl: error ';' •
+
+    $default  reduce using rule 5 (ConstDecl)
+
+
+State 7
+
+    6 ConstAssignmentList: IDENTIFIER • EQ NUMBER
+
+    EQ  shift, and go to state 15
+
+
+State 8
+
+    7 ConstAssignmentList: ARRAY • IDENTIFIER EQ '[' ConstArray ']'
+
+    IDENTIFIER  shift, and go to state 16
+
+
+State 9
+
+    3 ConstDecl: CONST ConstAssignmentList • ';'
+    8 ConstAssignmentList: ConstAssignmentList • ',' IDENTIFIER EQ NUMBER
+    9                    | ConstAssignmentList • ',' ARRAY IDENTIFIER EQ '[' ConstArray ']'
+
+    ';'  shift, and go to state 17
+    ','  shift, and go to state 18
+
+
+State 10
+
+    0 $accept: Program $end •
+
+    $default  accept
+
+
+State 11
+
+    1 Program: Block '.' •
+
+    $default  reduce using rule 1 (Program)
+
+
+State 12
+
+   12 VarDecl: error • ';'
+
+    ';'  shift, and go to state 19
+
+
+State 13
+
+   10 VarDecl: VAR • IdentifierList ';'
+
+    IDENTIFIER  shift, and go to state 20
+
+    $default  reduce using rule 18 (IdentifierList)
+
+    IdentifierList  go to state 21
+
+
+State 14
+
+    2 Block: ConstDecl VarDecl • ArrayDecl ProcDecl FuncDecl Statement
+
+    error  shift, and go to state 22
+    ARRAY  shift, and go to state 23
+
+    error       [reduce using rule 15 (ArrayDecl)]
+    IDENTIFIER  reduce using rule 15 (ArrayDecl)
+    PROCEDURE   reduce using rule 15 (ArrayDecl)
+    FUNCTION    reduce using rule 15 (ArrayDecl)
+    CALL        reduce using rule 15 (ArrayDecl)
+    BEGN        reduce using rule 15 (ArrayDecl)
+    IF          reduce using rule 15 (ArrayDecl)
+    WHILE       reduce using rule 15 (ArrayDecl)
+    FOR         reduce using rule 15 (ArrayDecl)
+    BREAK       reduce using rule 15 (ArrayDecl)
+    RETURN      reduce using rule 15 (ArrayDecl)
+    READ        reduce using rule 15 (ArrayDecl)
+    WRITE       reduce using rule 15 (ArrayDecl)
+    WRITELINE   reduce using rule 15 (ArrayDecl)
+    '.'         reduce using rule 15 (ArrayDecl)
+    ';'         reduce using rule 15 (ArrayDecl)
+
+    ArrayDecl  go to state 24
+
+
+State 15
+
+    6 ConstAssignmentList: IDENTIFIER EQ • NUMBER
+
+    NUMBER  shift, and go to state 25
+
+
+State 16
+
+    7 ConstAssignmentList: ARRAY IDENTIFIER • EQ '[' ConstArray ']'
+
+    EQ  shift, and go to state 26
+
+
+State 17
+
+    3 ConstDecl: CONST ConstAssignmentList ';' •
+
+    $default  reduce using rule 3 (ConstDecl)
+
+
+State 18
+
+    8 ConstAssignmentList: ConstAssignmentList ',' • IDENTIFIER EQ NUMBER
+    9                    | ConstAssignmentList ',' • ARRAY IDENTIFIER EQ '[' ConstArray ']'
+
+    IDENTIFIER  shift, and go to state 27
+    ARRAY       shift, and go to state 28
+
+
+State 19
+
+   12 VarDecl: error ';' •
+
+    $default  reduce using rule 12 (VarDecl)
+
+
+State 20
+
+   16 IdentifierList: IDENTIFIER •
+
+    $default  reduce using rule 16 (IdentifierList)
+
+
+State 21
+
+   10 VarDecl: VAR IdentifierList • ';'
+   17 IdentifierList: IdentifierList • ',' IDENTIFIER
+
+    ';'  shift, and go to state 29
+    ','  shift, and go to state 30
+
+
+State 22
+
+   14 ArrayDecl: error • ';'
+
+    ';'  shift, and go to state 31
+
+
+State 23
+
+   13 ArrayDecl: ARRAY • IdentifierList ';'
+
+    IDENTIFIER  shift, and go to state 20
+
+    $default  reduce using rule 18 (IdentifierList)
+
+    IdentifierList  go to state 32
+
+
+State 24
+
+    2 Block: ConstDecl VarDecl ArrayDecl • ProcDecl FuncDecl Statement
+
+    error  shift, and go to state 33
+
+    error       [reduce using rule 21 (ProcDecl)]
+    IDENTIFIER  reduce using rule 21 (ProcDecl)
+    PROCEDURE   reduce using rule 21 (ProcDecl)
+    FUNCTION    reduce using rule 21 (ProcDecl)
+    CALL        reduce using rule 21 (ProcDecl)
+    BEGN        reduce using rule 21 (ProcDecl)
+    IF          reduce using rule 21 (ProcDecl)
+    WHILE       reduce using rule 21 (ProcDecl)
+    FOR         reduce using rule 21 (ProcDecl)
+    BREAK       reduce using rule 21 (ProcDecl)
+    RETURN      reduce using rule 21 (ProcDecl)
+    READ        reduce using rule 21 (ProcDecl)
+    WRITE       reduce using rule 21 (ProcDecl)
+    WRITELINE   reduce using rule 21 (ProcDecl)
+    '.'         reduce using rule 21 (ProcDecl)
+    ';'         reduce using rule 21 (ProcDecl)
+
+    ProcDecl  go to state 34
+
+
+State 25
+
+    6 ConstAssignmentList: IDENTIFIER EQ NUMBER •
+
+    $default  reduce using rule 6 (ConstAssignmentList)
+
+
+State 26
+
+    7 ConstAssignmentList: ARRAY IDENTIFIER EQ • '[' ConstArray ']'
+
+    '['  shift, and go to state 35
+
+
+State 27
+
+    8 ConstAssignmentList: ConstAssignmentList ',' IDENTIFIER • EQ NUMBER
+
+    EQ  shift, and go to state 36
+
+
+State 28
+
+    9 ConstAssignmentList: ConstAssignmentList ',' ARRAY • IDENTIFIER EQ '[' ConstArray ']'
+
+    IDENTIFIER  shift, and go to state 37
+
+
+State 29
+
+   10 VarDecl: VAR IdentifierList ';' •
+
+    $default  reduce using rule 10 (VarDecl)
+
+
+State 30
+
+   17 IdentifierList: IdentifierList ',' • IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 38
+
+
+State 31
+
+   14 ArrayDecl: error ';' •
+
+    $default  reduce using rule 14 (ArrayDecl)
+
+
+State 32
+
+   13 ArrayDecl: ARRAY IdentifierList • ';'
+   17 IdentifierList: IdentifierList • ',' IDENTIFIER
+
+    ';'  shift, and go to state 39
+    ','  shift, and go to state 30
+
+
+State 33
+
+   20 ProcDecl: error • ';'
+
+    ';'  shift, and go to state 40
+
+
+State 34
+
+    2 Block: ConstDecl VarDecl ArrayDecl ProcDecl • FuncDecl Statement
+   19 ProcDecl: ProcDecl • PROCEDURE IDENTIFIER ';' Block ';'
+
+    error      shift, and go to state 41
+    PROCEDURE  shift, and go to state 42
+    FUNCTION   shift, and go to state 43
+
+    error       [reduce using rule 24 (FuncDecl)]
+    IDENTIFIER  reduce using rule 24 (FuncDecl)
+    CALL        reduce using rule 24 (FuncDecl)
+    BEGN        reduce using rule 24 (FuncDecl)
+    IF          reduce using rule 24 (FuncDecl)
+    WHILE       reduce using rule 24 (FuncDecl)
+    FOR         reduce using rule 24 (FuncDecl)
+    BREAK       reduce using rule 24 (FuncDecl)
+    RETURN      reduce using rule 24 (FuncDecl)
+    READ        reduce using rule 24 (FuncDecl)
+    WRITE       reduce using rule 24 (FuncDecl)
+    WRITELINE   reduce using rule 24 (FuncDecl)
+    '.'         reduce using rule 24 (FuncDecl)
+    ';'         reduce using rule 24 (FuncDecl)
+
+    FuncDecl  go to state 44
+
+
+State 35
+
+    7 ConstAssignmentList: ARRAY IDENTIFIER EQ '[' • ConstArray ']'
+
+    NUMBER  shift, and go to state 45
+
+    ConstArray  go to state 46
+
+
+State 36
+
+    8 ConstAssignmentList: ConstAssignmentList ',' IDENTIFIER EQ • NUMBER
+
+    NUMBER  shift, and go to state 47
+
+
+State 37
+
+    9 ConstAssignmentList: ConstAssignmentList ',' ARRAY IDENTIFIER • EQ '[' ConstArray ']'
+
+    EQ  shift, and go to state 48
+
+
+State 38
+
+   17 IdentifierList: IdentifierList ',' IDENTIFIER •
+
+    $default  reduce using rule 17 (IdentifierList)
+
+
+State 39
+
+   13 ArrayDecl: ARRAY IdentifierList ';' •
+
+    $default  reduce using rule 13 (ArrayDecl)
+
+
+State 40
+
+   20 ProcDecl: error ';' •
+
+    $default  reduce using rule 20 (ProcDecl)
+
+
+State 41
+
+   23 FuncDecl: error • ';'
+
+    ';'  shift, and go to state 49
+
+
+State 42
+
+   19 ProcDecl: ProcDecl PROCEDURE • IDENTIFIER ';' Block ';'
+
+    IDENTIFIER  shift, and go to state 50
+
+
+State 43
+
+   22 FuncDecl: FUNCTION • IDENTIFIER '(' IdentifierList ')' ';' Block ';'
+
+    IDENTIFIER  shift, and go to state 51
+
+
+State 44
+
+    2 Block: ConstDecl VarDecl ArrayDecl ProcDecl FuncDecl • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    '.'  reduce using rule 35 (Statement)
+    ';'  reduce using rule 35 (Statement)
+
+    Statement             go to state 64
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 45
+
+   77 ConstArray: NUMBER •
+
+    $default  reduce using rule 77 (ConstArray)
+
+
+State 46
+
+    7 ConstAssignmentList: ARRAY IDENTIFIER EQ '[' ConstArray • ']'
+   78 ConstArray: ConstArray • ',' NUMBER
+   79           | ConstArray • error NUMBER
+
+    error  shift, and go to state 70
+    ']'    shift, and go to state 71
+    ','    shift, and go to state 72
+
+
+State 47
+
+    8 ConstAssignmentList: ConstAssignmentList ',' IDENTIFIER EQ NUMBER •
+
+    $default  reduce using rule 8 (ConstAssignmentList)
+
+
+State 48
+
+    9 ConstAssignmentList: ConstAssignmentList ',' ARRAY IDENTIFIER EQ • '[' ConstArray ']'
+
+    '['  shift, and go to state 73
+
+
+State 49
+
+   23 FuncDecl: error ';' •
+
+    $default  reduce using rule 23 (FuncDecl)
+
+
+State 50
+
+   19 ProcDecl: ProcDecl PROCEDURE IDENTIFIER • ';' Block ';'
+
+    ';'  shift, and go to state 74
+
+
+State 51
+
+   22 FuncDecl: FUNCTION IDENTIFIER • '(' IdentifierList ')' ';' Block ';'
+
+    '('  shift, and go to state 75
+
+
+State 52
+
+   38 ConditionalStatement: error • Condition THEN Statement
+   40                     | error • Condition THEN Statement ELSE Statement
+   44 LoopStatement: error • Condition DO Statement
+   48              | error • Expression DO Statement
+   58 FuncCall: error • IDENTIFIER '(' GeneralList ')'
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 78
+    CALL        shift, and go to state 79
+    ODD         shift, and go to state 80
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Condition   go to state 85
+    Expression  go to state 86
+
+
+State 53
+
+   25 Statement: IDENTIFIER • ASGN Expression
+   26          | IDENTIFIER • ASGN '[' GeneralList ']'
+   27          | IDENTIFIER • '[' NUMBER ']' ASGN Expression
+
+    ASGN  shift, and go to state 87
+    '['   shift, and go to state 88
+
+
+State 54
+
+   28 Statement: CALL • IDENTIFIER
+   57 FuncCall: CALL • IDENTIFIER '(' GeneralList ')'
+   59         | CALL • error '(' GeneralList ')'
+   60         | CALL • IDENTIFIER error GeneralList ')'
+   61         | CALL • IDENTIFIER '(' GeneralList error
+
+    error       shift, and go to state 89
+    IDENTIFIER  shift, and go to state 90
+
+
+State 55
+
+   30 Statement: BEGN • StatementList END
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 91
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+    StatementList         go to state 92
+
+
+State 56
+
+   36 ConditionalStatement: IF • Condition THEN Statement
+   37                     | IF • Condition THEN Statement ELSE Statement
+   39                     | IF • Condition error Statement
+   41                     | IF • Condition error Statement ELSE Statement
+   42                     | IF • Condition THEN Statement error Statement
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    ODD         shift, and go to state 80
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Condition   go to state 94
+    Expression  go to state 95
+
+
+State 57
+
+   43 LoopStatement: WHILE • Condition DO Statement
+   45              | WHILE • Condition error Statement
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    ODD         shift, and go to state 80
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Condition   go to state 96
+    Expression  go to state 95
+
+
+State 58
+
+   46 LoopStatement: FOR • IDENTIFIER UPTO Expression DO Statement
+   47              | FOR • IDENTIFIER DOWNTO Expression DO Statement
+   49              | FOR • IDENTIFIER UPTO Expression error Statement
+   50              | FOR • IDENTIFIER DOWNTO Expression error Statement
+
+    IDENTIFIER  shift, and go to state 97
+
+
+State 59
+
+   62 ControlStatement: BREAK •
+
+    $default  reduce using rule 62 (ControlStatement)
+
+
+State 60
+
+   63 ControlStatement: RETURN •
+   64                 | RETURN • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    error  [reduce using rule 63 (ControlStatement)]
+    END    reduce using rule 63 (ControlStatement)
+    ELSE   reduce using rule 63 (ControlStatement)
+    '.'    reduce using rule 63 (ControlStatement)
+    ';'    reduce using rule 63 (ControlStatement)
+
+    FuncCall    go to state 84
+    Expression  go to state 98
+
+
+State 61
+
+   51 IOStatement: READ • '(' IDENTIFIER ')'
+   54            | READ • '(' error ')'
+
+    '('  shift, and go to state 99
+
+
+State 62
+
+   52 IOStatement: WRITE • '(' IDENTIFIER ')'
+   55            | WRITE • '(' error ')'
+
+    '('  shift, and go to state 100
+
+
+State 63
+
+   53 IOStatement: WRITELINE • '(' IDENTIFIER ')'
+   56            | WRITELINE • '(' error ')'
+
+    '('  shift, and go to state 101
+
+
+State 64
+
+    2 Block: ConstDecl VarDecl ArrayDecl ProcDecl FuncDecl Statement •
+
+    $default  reduce using rule 2 (Block)
+
+
+State 65
+
+   31 Statement: ConditionalStatement •
+
+    $default  reduce using rule 31 (Statement)
+
+
+State 66
+
+   32 Statement: LoopStatement •
+
+    $default  reduce using rule 32 (Statement)
+
+
+State 67
+
+   34 Statement: IOStatement •
+
+    $default  reduce using rule 34 (Statement)
+
+
+State 68
+
+   29 Statement: FuncCall •
+
+    $default  reduce using rule 29 (Statement)
+
+
+State 69
+
+   33 Statement: ControlStatement •
+
+    $default  reduce using rule 33 (Statement)
+
+
+State 70
+
+   79 ConstArray: ConstArray error • NUMBER
+
+    NUMBER  shift, and go to state 102
+
+
+State 71
+
+    7 ConstAssignmentList: ARRAY IDENTIFIER EQ '[' ConstArray ']' •
+
+    $default  reduce using rule 7 (ConstAssignmentList)
+
+
+State 72
+
+   78 ConstArray: ConstArray ',' • NUMBER
+
+    NUMBER  shift, and go to state 103
+
+
+State 73
+
+    9 ConstAssignmentList: ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' • ConstArray ']'
+
+    NUMBER  shift, and go to state 45
+
+    ConstArray  go to state 104
+
+
+State 74
+
+   19 ProcDecl: ProcDecl PROCEDURE IDENTIFIER ';' • Block ';'
+
+    error  shift, and go to state 1
+    CONST  shift, and go to state 2
+
+    error       [reduce using rule 4 (ConstDecl)]
+    IDENTIFIER  reduce using rule 4 (ConstDecl)
+    VAR         reduce using rule 4 (ConstDecl)
+    ARRAY       reduce using rule 4 (ConstDecl)
+    PROCEDURE   reduce using rule 4 (ConstDecl)
+    FUNCTION    reduce using rule 4 (ConstDecl)
+    CALL        reduce using rule 4 (ConstDecl)
+    BEGN        reduce using rule 4 (ConstDecl)
+    IF          reduce using rule 4 (ConstDecl)
+    WHILE       reduce using rule 4 (ConstDecl)
+    FOR         reduce using rule 4 (ConstDecl)
+    BREAK       reduce using rule 4 (ConstDecl)
+    RETURN      reduce using rule 4 (ConstDecl)
+    READ        reduce using rule 4 (ConstDecl)
+    WRITE       reduce using rule 4 (ConstDecl)
+    WRITELINE   reduce using rule 4 (ConstDecl)
+    ';'         reduce using rule 4 (ConstDecl)
+
+    Block      go to state 105
+    ConstDecl  go to state 5
+
+
+State 75
+
+   22 FuncDecl: FUNCTION IDENTIFIER '(' • IdentifierList ')' ';' Block ';'
+
+    IDENTIFIER  shift, and go to state 20
+
+    $default  reduce using rule 18 (IdentifierList)
+
+    IdentifierList  go to state 106
+
+
+State 76
+
+   58 FuncCall: error • IDENTIFIER '(' GeneralList ')'
+   94 Expression: error • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 78
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 107
+
+
+State 77
+
+   97 Expression: NUMBER •
+
+    $default  reduce using rule 97 (Expression)
+
+
+State 78
+
+   58 FuncCall: error IDENTIFIER • '(' GeneralList ')'
+   95 Expression: IDENTIFIER •
+   96           | IDENTIFIER • '[' NUMBER ']'
+
+    '['  shift, and go to state 108
+    '('  shift, and go to state 109
+
+    $default  reduce using rule 95 (Expression)
+
+
+State 79
+
+   57 FuncCall: CALL • IDENTIFIER '(' GeneralList ')'
+   59         | CALL • error '(' GeneralList ')'
+   60         | CALL • IDENTIFIER error GeneralList ')'
+   61         | CALL • IDENTIFIER '(' GeneralList error
+
+    error       shift, and go to state 89
+    IDENTIFIER  shift, and go to state 110
+
+
+State 80
+
+   69 Condition: ODD • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 111
+
+
+State 81
+
+   92 Expression: '+' • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 112
+
+
+State 82
+
+   93 Expression: '-' • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 113
+
+
+State 83
+
+   98 Expression: '(' • Expression ')'
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 114
+
+
+State 84
+
+   99 Expression: FuncCall •
+
+    $default  reduce using rule 99 (Expression)
+
+
+State 85
+
+   38 ConditionalStatement: error Condition • THEN Statement
+   40                     | error Condition • THEN Statement ELSE Statement
+   44 LoopStatement: error Condition • DO Statement
+
+    THEN  shift, and go to state 115
+    DO    shift, and go to state 116
+
+
+State 86
+
+   48 LoopStatement: error Expression • DO Statement
+   70 Condition: Expression • EQ Expression
+   71          | Expression • IDK Expression
+   72          | Expression • GT Expression
+   73          | Expression • LT Expression
+   74          | Expression • LEQ Expression
+   75          | Expression • GEQ Expression
+   76          | Expression • ASGN Expression
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    DO    shift, and go to state 117
+    EQ    shift, and go to state 118
+    IDK   shift, and go to state 119
+    GT    shift, and go to state 120
+    LT    shift, and go to state 121
+    GEQ   shift, and go to state 122
+    LEQ   shift, and go to state 123
+    ASGN  shift, and go to state 124
+    '+'   shift, and go to state 125
+    '-'   shift, and go to state 126
+    '*'   shift, and go to state 127
+    '/'   shift, and go to state 128
+    '%'   shift, and go to state 129
+
+
+State 87
+
+   25 Statement: IDENTIFIER ASGN • Expression
+   26          | IDENTIFIER ASGN • '[' GeneralList ']'
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '['         shift, and go to state 130
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 131
+
+
+State 88
+
+   27 Statement: IDENTIFIER '[' • NUMBER ']' ASGN Expression
+
+    NUMBER  shift, and go to state 132
+
+
+State 89
+
+   59 FuncCall: CALL error • '(' GeneralList ')'
+
+    '('  shift, and go to state 133
+
+
+State 90
+
+   28 Statement: CALL IDENTIFIER •
+   57 FuncCall: CALL IDENTIFIER • '(' GeneralList ')'
+   60         | CALL IDENTIFIER • error GeneralList ')'
+   61         | CALL IDENTIFIER • '(' GeneralList error
+
+    error  shift, and go to state 134
+    '('    shift, and go to state 135
+
+    error  [reduce using rule 28 (Statement)]
+    END    reduce using rule 28 (Statement)
+    ELSE   reduce using rule 28 (Statement)
+    '.'    reduce using rule 28 (Statement)
+    ';'    reduce using rule 28 (Statement)
+
+
+State 91
+
+   65 StatementList: Statement •
+
+    $default  reduce using rule 65 (StatementList)
+
+
+State 92
+
+   30 Statement: BEGN StatementList • END
+   66 StatementList: StatementList • ';' Statement
+   68              | StatementList • error $@1 Statement
+
+    error  shift, and go to state 136
+    END    shift, and go to state 137
+    ';'    shift, and go to state 138
+
+
+State 93
+
+   95 Expression: IDENTIFIER •
+   96           | IDENTIFIER • '[' NUMBER ']'
+
+    '['  shift, and go to state 108
+
+    $default  reduce using rule 95 (Expression)
+
+
+State 94
+
+   36 ConditionalStatement: IF Condition • THEN Statement
+   37                     | IF Condition • THEN Statement ELSE Statement
+   39                     | IF Condition • error Statement
+   41                     | IF Condition • error Statement ELSE Statement
+   42                     | IF Condition • THEN Statement error Statement
+
+    error  shift, and go to state 139
+    THEN   shift, and go to state 140
+
+
+State 95
+
+   70 Condition: Expression • EQ Expression
+   71          | Expression • IDK Expression
+   72          | Expression • GT Expression
+   73          | Expression • LT Expression
+   74          | Expression • LEQ Expression
+   75          | Expression • GEQ Expression
+   76          | Expression • ASGN Expression
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    EQ    shift, and go to state 118
+    IDK   shift, and go to state 119
+    GT    shift, and go to state 120
+    LT    shift, and go to state 121
+    GEQ   shift, and go to state 122
+    LEQ   shift, and go to state 123
+    ASGN  shift, and go to state 124
+    '+'   shift, and go to state 125
+    '-'   shift, and go to state 126
+    '*'   shift, and go to state 127
+    '/'   shift, and go to state 128
+    '%'   shift, and go to state 129
+
+
+State 96
+
+   43 LoopStatement: WHILE Condition • DO Statement
+   45              | WHILE Condition • error Statement
+
+    error  shift, and go to state 141
+    DO     shift, and go to state 142
+
+
+State 97
+
+   46 LoopStatement: FOR IDENTIFIER • UPTO Expression DO Statement
+   47              | FOR IDENTIFIER • DOWNTO Expression DO Statement
+   49              | FOR IDENTIFIER • UPTO Expression error Statement
+   50              | FOR IDENTIFIER • DOWNTO Expression error Statement
+
+    UPTO    shift, and go to state 143
+    DOWNTO  shift, and go to state 144
+
+
+State 98
+
+   64 ControlStatement: RETURN Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 64 (ControlStatement)
+
+
+State 99
+
+   51 IOStatement: READ '(' • IDENTIFIER ')'
+   54            | READ '(' • error ')'
+
+    error       shift, and go to state 145
+    IDENTIFIER  shift, and go to state 146
+
+
+State 100
+
+   52 IOStatement: WRITE '(' • IDENTIFIER ')'
+   55            | WRITE '(' • error ')'
+
+    error       shift, and go to state 147
+    IDENTIFIER  shift, and go to state 148
+
+
+State 101
+
+   53 IOStatement: WRITELINE '(' • IDENTIFIER ')'
+   56            | WRITELINE '(' • error ')'
+
+    error       shift, and go to state 149
+    IDENTIFIER  shift, and go to state 150
+
+
+State 102
+
+   79 ConstArray: ConstArray error NUMBER •
+
+    $default  reduce using rule 79 (ConstArray)
+
+
+State 103
+
+   78 ConstArray: ConstArray ',' NUMBER •
+
+    $default  reduce using rule 78 (ConstArray)
+
+
+State 104
+
+    9 ConstAssignmentList: ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray • ']'
+   78 ConstArray: ConstArray • ',' NUMBER
+   79           | ConstArray • error NUMBER
+
+    error  shift, and go to state 70
+    ']'    shift, and go to state 151
+    ','    shift, and go to state 72
+
+
+State 105
+
+   19 ProcDecl: ProcDecl PROCEDURE IDENTIFIER ';' Block • ';'
+
+    ';'  shift, and go to state 152
+
+
+State 106
+
+   17 IdentifierList: IdentifierList • ',' IDENTIFIER
+   22 FuncDecl: FUNCTION IDENTIFIER '(' IdentifierList • ')' ';' Block ';'
+
+    ','  shift, and go to state 30
+    ')'  shift, and go to state 153
+
+
+State 107
+
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+   94           | error Expression •
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    '+'       [reduce using rule 94 (Expression)]
+    '-'       [reduce using rule 94 (Expression)]
+    '*'       [reduce using rule 94 (Expression)]
+    '/'       [reduce using rule 94 (Expression)]
+    '%'       [reduce using rule 94 (Expression)]
+    $default  reduce using rule 94 (Expression)
+
+
+State 108
+
+   96 Expression: IDENTIFIER '[' • NUMBER ']'
+
+    NUMBER  shift, and go to state 154
+
+
+State 109
+
+   58 FuncCall: error IDENTIFIER '(' • GeneralList ')'
+
+    NUMBER      shift, and go to state 155
+    IDENTIFIER  shift, and go to state 156
+
+    $default  reduce using rule 86 (GeneralList)
+
+    GeneralList  go to state 157
+
+
+State 110
+
+   57 FuncCall: CALL IDENTIFIER • '(' GeneralList ')'
+   60         | CALL IDENTIFIER • error GeneralList ')'
+   61         | CALL IDENTIFIER • '(' GeneralList error
+
+    error  shift, and go to state 134
+    '('    shift, and go to state 135
+
+
+State 111
+
+   69 Condition: ODD Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 69 (Condition)
+
+
+State 112
+
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+   92           | '+' Expression •
+
+    $default  reduce using rule 92 (Expression)
+
+
+State 113
+
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+   93           | '-' Expression •
+
+    $default  reduce using rule 93 (Expression)
+
+
+State 114
+
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+   98           | '(' Expression • ')'
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+    ')'  shift, and go to state 158
+
+
+State 115
+
+   38 ConditionalStatement: error Condition THEN • Statement
+   40                     | error Condition THEN • Statement ELSE Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 159
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 116
+
+   44 LoopStatement: error Condition DO • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 160
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 117
+
+   48 LoopStatement: error Expression DO • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 161
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 118
+
+   70 Condition: Expression EQ • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 162
+
+
+State 119
+
+   71 Condition: Expression IDK • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 163
+
+
+State 120
+
+   72 Condition: Expression GT • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 164
+
+
+State 121
+
+   73 Condition: Expression LT • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 165
+
+
+State 122
+
+   75 Condition: Expression GEQ • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 166
+
+
+State 123
+
+   74 Condition: Expression LEQ • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 167
+
+
+State 124
+
+   76 Condition: Expression ASGN • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 168
+
+
+State 125
+
+   87 Expression: Expression '+' • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 169
+
+
+State 126
+
+   88 Expression: Expression '-' • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 170
+
+
+State 127
+
+   89 Expression: Expression '*' • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 171
+
+
+State 128
+
+   90 Expression: Expression '/' • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 172
+
+
+State 129
+
+   91 Expression: Expression '%' • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 173
+
+
+State 130
+
+   26 Statement: IDENTIFIER ASGN '[' • GeneralList ']'
+
+    NUMBER      shift, and go to state 155
+    IDENTIFIER  shift, and go to state 156
+
+    $default  reduce using rule 86 (GeneralList)
+
+    GeneralList  go to state 174
+
+
+State 131
+
+   25 Statement: IDENTIFIER ASGN Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 25 (Statement)
+
+
+State 132
+
+   27 Statement: IDENTIFIER '[' NUMBER • ']' ASGN Expression
+
+    ']'  shift, and go to state 175
+
+
+State 133
+
+   59 FuncCall: CALL error '(' • GeneralList ')'
+
+    NUMBER      shift, and go to state 155
+    IDENTIFIER  shift, and go to state 156
+
+    $default  reduce using rule 86 (GeneralList)
+
+    GeneralList  go to state 176
+
+
+State 134
+
+   60 FuncCall: CALL IDENTIFIER error • GeneralList ')'
+
+    NUMBER      shift, and go to state 155
+    IDENTIFIER  shift, and go to state 156
+
+    $default  reduce using rule 86 (GeneralList)
+
+    GeneralList  go to state 177
+
+
+State 135
+
+   57 FuncCall: CALL IDENTIFIER '(' • GeneralList ')'
+   61         | CALL IDENTIFIER '(' • GeneralList error
+
+    NUMBER      shift, and go to state 155
+    IDENTIFIER  shift, and go to state 156
+
+    $default  reduce using rule 86 (GeneralList)
+
+    GeneralList  go to state 178
+
+
+State 136
+
+   68 StatementList: StatementList error • $@1 Statement
+
+    $default  reduce using rule 67 ($@1)
+
+    $@1  go to state 179
+
+
+State 137
+
+   30 Statement: BEGN StatementList END •
+
+    $default  reduce using rule 30 (Statement)
+
+
+State 138
+
+   66 StatementList: StatementList ';' • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 180
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 139
+
+   39 ConditionalStatement: IF Condition error • Statement
+   41                     | IF Condition error • Statement ELSE Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 181
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 140
+
+   36 ConditionalStatement: IF Condition THEN • Statement
+   37                     | IF Condition THEN • Statement ELSE Statement
+   42                     | IF Condition THEN • Statement error Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 182
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 141
+
+   45 LoopStatement: WHILE Condition error • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 183
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 142
+
+   43 LoopStatement: WHILE Condition DO • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 184
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 143
+
+   46 LoopStatement: FOR IDENTIFIER UPTO • Expression DO Statement
+   49              | FOR IDENTIFIER UPTO • Expression error Statement
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 185
+
+
+State 144
+
+   47 LoopStatement: FOR IDENTIFIER DOWNTO • Expression DO Statement
+   50              | FOR IDENTIFIER DOWNTO • Expression error Statement
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 186
+
+
+State 145
+
+   54 IOStatement: READ '(' error • ')'
+
+    ')'  shift, and go to state 187
+
+
+State 146
+
+   51 IOStatement: READ '(' IDENTIFIER • ')'
+
+    ')'  shift, and go to state 188
+
+
+State 147
+
+   55 IOStatement: WRITE '(' error • ')'
+
+    ')'  shift, and go to state 189
+
+
+State 148
+
+   52 IOStatement: WRITE '(' IDENTIFIER • ')'
+
+    ')'  shift, and go to state 190
+
+
+State 149
+
+   56 IOStatement: WRITELINE '(' error • ')'
+
+    ')'  shift, and go to state 191
+
+
+State 150
+
+   53 IOStatement: WRITELINE '(' IDENTIFIER • ')'
+
+    ')'  shift, and go to state 192
+
+
+State 151
+
+    9 ConstAssignmentList: ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']' •
+
+    $default  reduce using rule 9 (ConstAssignmentList)
+
+
+State 152
+
+   19 ProcDecl: ProcDecl PROCEDURE IDENTIFIER ';' Block ';' •
+
+    $default  reduce using rule 19 (ProcDecl)
+
+
+State 153
+
+   22 FuncDecl: FUNCTION IDENTIFIER '(' IdentifierList ')' • ';' Block ';'
+
+    ';'  shift, and go to state 193
+
+
+State 154
+
+   96 Expression: IDENTIFIER '[' NUMBER • ']'
+
+    ']'  shift, and go to state 194
+
+
+State 155
+
+   80 GeneralList: NUMBER •
+
+    $default  reduce using rule 80 (GeneralList)
+
+
+State 156
+
+   81 GeneralList: IDENTIFIER •
+
+    $default  reduce using rule 81 (GeneralList)
+
+
+State 157
+
+   58 FuncCall: error IDENTIFIER '(' GeneralList • ')'
+   82 GeneralList: GeneralList • ',' NUMBER
+   83            | GeneralList • ',' IDENTIFIER
+   84            | GeneralList • error NUMBER
+   85            | GeneralList • error IDENTIFIER
+
+    error  shift, and go to state 195
+    ','    shift, and go to state 196
+    ')'    shift, and go to state 197
+
+
+State 158
+
+   98 Expression: '(' Expression ')' •
+
+    $default  reduce using rule 98 (Expression)
+
+
+State 159
+
+   38 ConditionalStatement: error Condition THEN Statement •
+   40                     | error Condition THEN Statement • ELSE Statement
+
+    ELSE  shift, and go to state 198
+
+    $default  reduce using rule 38 (ConditionalStatement)
+
+
+State 160
+
+   44 LoopStatement: error Condition DO Statement •
+
+    $default  reduce using rule 44 (LoopStatement)
+
+
+State 161
+
+   48 LoopStatement: error Expression DO Statement •
+
+    $default  reduce using rule 48 (LoopStatement)
+
+
+State 162
+
+   70 Condition: Expression EQ Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 70 (Condition)
+
+
+State 163
+
+   71 Condition: Expression IDK Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 71 (Condition)
+
+
+State 164
+
+   72 Condition: Expression GT Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 72 (Condition)
+
+
+State 165
+
+   73 Condition: Expression LT Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 73 (Condition)
+
+
+State 166
+
+   75 Condition: Expression GEQ Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 75 (Condition)
+
+
+State 167
+
+   74 Condition: Expression LEQ Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 74 (Condition)
+
+
+State 168
+
+   76 Condition: Expression ASGN Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 76 (Condition)
+
+
+State 169
+
+   87 Expression: Expression • '+' Expression
+   87           | Expression '+' Expression •
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 87 (Expression)
+
+
+State 170
+
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   88           | Expression '-' Expression •
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 88 (Expression)
+
+
+State 171
+
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   89           | Expression '*' Expression •
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    $default  reduce using rule 89 (Expression)
+
+
+State 172
+
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   90           | Expression '/' Expression •
+   91           | Expression • '%' Expression
+
+    $default  reduce using rule 90 (Expression)
+
+
+State 173
+
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+   91           | Expression '%' Expression •
+
+    $default  reduce using rule 91 (Expression)
+
+
+State 174
+
+   26 Statement: IDENTIFIER ASGN '[' GeneralList • ']'
+   82 GeneralList: GeneralList • ',' NUMBER
+   83            | GeneralList • ',' IDENTIFIER
+   84            | GeneralList • error NUMBER
+   85            | GeneralList • error IDENTIFIER
+
+    error  shift, and go to state 195
+    ']'    shift, and go to state 199
+    ','    shift, and go to state 196
+
+
+State 175
+
+   27 Statement: IDENTIFIER '[' NUMBER ']' • ASGN Expression
+
+    ASGN  shift, and go to state 200
+
+
+State 176
+
+   59 FuncCall: CALL error '(' GeneralList • ')'
+   82 GeneralList: GeneralList • ',' NUMBER
+   83            | GeneralList • ',' IDENTIFIER
+   84            | GeneralList • error NUMBER
+   85            | GeneralList • error IDENTIFIER
+
+    error  shift, and go to state 195
+    ','    shift, and go to state 196
+    ')'    shift, and go to state 201
+
+
+State 177
+
+   60 FuncCall: CALL IDENTIFIER error GeneralList • ')'
+   82 GeneralList: GeneralList • ',' NUMBER
+   83            | GeneralList • ',' IDENTIFIER
+   84            | GeneralList • error NUMBER
+   85            | GeneralList • error IDENTIFIER
+
+    error  shift, and go to state 195
+    ','    shift, and go to state 196
+    ')'    shift, and go to state 202
+
+
+State 178
+
+   57 FuncCall: CALL IDENTIFIER '(' GeneralList • ')'
+   61         | CALL IDENTIFIER '(' GeneralList • error
+   82 GeneralList: GeneralList • ',' NUMBER
+   83            | GeneralList • ',' IDENTIFIER
+   84            | GeneralList • error NUMBER
+   85            | GeneralList • error IDENTIFIER
+
+    error  shift, and go to state 203
+    ','    shift, and go to state 196
+    ')'    shift, and go to state 204
+
+
+State 179
+
+   68 StatementList: StatementList error $@1 • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 205
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 180
+
+   66 StatementList: StatementList ';' Statement •
+
+    $default  reduce using rule 66 (StatementList)
+
+
+State 181
+
+   39 ConditionalStatement: IF Condition error Statement •
+   41                     | IF Condition error Statement • ELSE Statement
+
+    ELSE  shift, and go to state 206
+
+    $default  reduce using rule 39 (ConditionalStatement)
+
+
+State 182
+
+   36 ConditionalStatement: IF Condition THEN Statement •
+   37                     | IF Condition THEN Statement • ELSE Statement
+   42                     | IF Condition THEN Statement • error Statement
+
+    error  shift, and go to state 207
+    ELSE   shift, and go to state 208
+
+    error  [reduce using rule 36 (ConditionalStatement)]
+    END    reduce using rule 36 (ConditionalStatement)
+    '.'    reduce using rule 36 (ConditionalStatement)
+    ';'    reduce using rule 36 (ConditionalStatement)
+
+
+State 183
+
+   45 LoopStatement: WHILE Condition error Statement •
+
+    $default  reduce using rule 45 (LoopStatement)
+
+
+State 184
+
+   43 LoopStatement: WHILE Condition DO Statement •
+
+    $default  reduce using rule 43 (LoopStatement)
+
+
+State 185
+
+   46 LoopStatement: FOR IDENTIFIER UPTO Expression • DO Statement
+   49              | FOR IDENTIFIER UPTO Expression • error Statement
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    error  shift, and go to state 209
+    DO     shift, and go to state 210
+    '+'    shift, and go to state 125
+    '-'    shift, and go to state 126
+    '*'    shift, and go to state 127
+    '/'    shift, and go to state 128
+    '%'    shift, and go to state 129
+
+
+State 186
+
+   47 LoopStatement: FOR IDENTIFIER DOWNTO Expression • DO Statement
+   50              | FOR IDENTIFIER DOWNTO Expression • error Statement
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    error  shift, and go to state 211
+    DO     shift, and go to state 212
+    '+'    shift, and go to state 125
+    '-'    shift, and go to state 126
+    '*'    shift, and go to state 127
+    '/'    shift, and go to state 128
+    '%'    shift, and go to state 129
+
+
+State 187
+
+   54 IOStatement: READ '(' error ')' •
+
+    $default  reduce using rule 54 (IOStatement)
+
+
+State 188
+
+   51 IOStatement: READ '(' IDENTIFIER ')' •
+
+    $default  reduce using rule 51 (IOStatement)
+
+
+State 189
+
+   55 IOStatement: WRITE '(' error ')' •
+
+    $default  reduce using rule 55 (IOStatement)
+
+
+State 190
+
+   52 IOStatement: WRITE '(' IDENTIFIER ')' •
+
+    $default  reduce using rule 52 (IOStatement)
+
+
+State 191
+
+   56 IOStatement: WRITELINE '(' error ')' •
+
+    $default  reduce using rule 56 (IOStatement)
+
+
+State 192
+
+   53 IOStatement: WRITELINE '(' IDENTIFIER ')' •
+
+    $default  reduce using rule 53 (IOStatement)
+
+
+State 193
+
+   22 FuncDecl: FUNCTION IDENTIFIER '(' IdentifierList ')' ';' • Block ';'
+
+    error  shift, and go to state 1
+    CONST  shift, and go to state 2
+
+    error       [reduce using rule 4 (ConstDecl)]
+    IDENTIFIER  reduce using rule 4 (ConstDecl)
+    VAR         reduce using rule 4 (ConstDecl)
+    ARRAY       reduce using rule 4 (ConstDecl)
+    PROCEDURE   reduce using rule 4 (ConstDecl)
+    FUNCTION    reduce using rule 4 (ConstDecl)
+    CALL        reduce using rule 4 (ConstDecl)
+    BEGN        reduce using rule 4 (ConstDecl)
+    IF          reduce using rule 4 (ConstDecl)
+    WHILE       reduce using rule 4 (ConstDecl)
+    FOR         reduce using rule 4 (ConstDecl)
+    BREAK       reduce using rule 4 (ConstDecl)
+    RETURN      reduce using rule 4 (ConstDecl)
+    READ        reduce using rule 4 (ConstDecl)
+    WRITE       reduce using rule 4 (ConstDecl)
+    WRITELINE   reduce using rule 4 (ConstDecl)
+    ';'         reduce using rule 4 (ConstDecl)
+
+    Block      go to state 213
+    ConstDecl  go to state 5
+
+
+State 194
+
+   96 Expression: IDENTIFIER '[' NUMBER ']' •
+
+    $default  reduce using rule 96 (Expression)
+
+
+State 195
+
+   84 GeneralList: GeneralList error • NUMBER
+   85            | GeneralList error • IDENTIFIER
+
+    NUMBER      shift, and go to state 214
+    IDENTIFIER  shift, and go to state 215
+
+
+State 196
+
+   82 GeneralList: GeneralList ',' • NUMBER
+   83            | GeneralList ',' • IDENTIFIER
+
+    NUMBER      shift, and go to state 216
+    IDENTIFIER  shift, and go to state 217
+
+
+State 197
+
+   58 FuncCall: error IDENTIFIER '(' GeneralList ')' •
+
+    $default  reduce using rule 58 (FuncCall)
+
+
+State 198
+
+   40 ConditionalStatement: error Condition THEN Statement ELSE • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 218
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 199
+
+   26 Statement: IDENTIFIER ASGN '[' GeneralList ']' •
+
+    $default  reduce using rule 26 (Statement)
+
+
+State 200
+
+   27 Statement: IDENTIFIER '[' NUMBER ']' ASGN • Expression
+
+    error       shift, and go to state 76
+    NUMBER      shift, and go to state 77
+    IDENTIFIER  shift, and go to state 93
+    CALL        shift, and go to state 79
+    '+'         shift, and go to state 81
+    '-'         shift, and go to state 82
+    '('         shift, and go to state 83
+
+    FuncCall    go to state 84
+    Expression  go to state 219
+
+
+State 201
+
+   59 FuncCall: CALL error '(' GeneralList ')' •
+
+    $default  reduce using rule 59 (FuncCall)
+
+
+State 202
+
+   60 FuncCall: CALL IDENTIFIER error GeneralList ')' •
+
+    $default  reduce using rule 60 (FuncCall)
+
+
+State 203
+
+   61 FuncCall: CALL IDENTIFIER '(' GeneralList error •
+   84 GeneralList: GeneralList error • NUMBER
+   85            | GeneralList error • IDENTIFIER
+
+    NUMBER      shift, and go to state 214
+    IDENTIFIER  shift, and go to state 215
+
+    $default  reduce using rule 61 (FuncCall)
+
+
+State 204
+
+   57 FuncCall: CALL IDENTIFIER '(' GeneralList ')' •
+
+    $default  reduce using rule 57 (FuncCall)
+
+
+State 205
+
+   68 StatementList: StatementList error $@1 Statement •
+
+    $default  reduce using rule 68 (StatementList)
+
+
+State 206
+
+   41 ConditionalStatement: IF Condition error Statement ELSE • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 220
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 207
+
+   42 ConditionalStatement: IF Condition THEN Statement error • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 221
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 208
+
+   37 ConditionalStatement: IF Condition THEN Statement ELSE • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 222
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 209
+
+   49 LoopStatement: FOR IDENTIFIER UPTO Expression error • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 223
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 210
+
+   46 LoopStatement: FOR IDENTIFIER UPTO Expression DO • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 224
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 211
+
+   50 LoopStatement: FOR IDENTIFIER DOWNTO Expression error • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 225
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 212
+
+   47 LoopStatement: FOR IDENTIFIER DOWNTO Expression DO • Statement
+
+    error       shift, and go to state 52
+    IDENTIFIER  shift, and go to state 53
+    CALL        shift, and go to state 54
+    BEGN        shift, and go to state 55
+    IF          shift, and go to state 56
+    WHILE       shift, and go to state 57
+    FOR         shift, and go to state 58
+    BREAK       shift, and go to state 59
+    RETURN      shift, and go to state 60
+    READ        shift, and go to state 61
+    WRITE       shift, and go to state 62
+    WRITELINE   shift, and go to state 63
+
+    error  [reduce using rule 35 (Statement)]
+    END    reduce using rule 35 (Statement)
+    ELSE   reduce using rule 35 (Statement)
+    '.'    reduce using rule 35 (Statement)
+    ';'    reduce using rule 35 (Statement)
+
+    Statement             go to state 226
+    ConditionalStatement  go to state 65
+    LoopStatement         go to state 66
+    IOStatement           go to state 67
+    FuncCall              go to state 68
+    ControlStatement      go to state 69
+
+
+State 213
+
+   22 FuncDecl: FUNCTION IDENTIFIER '(' IdentifierList ')' ';' Block • ';'
+
+    ';'  shift, and go to state 227
+
+
+State 214
+
+   84 GeneralList: GeneralList error NUMBER •
+
+    $default  reduce using rule 84 (GeneralList)
+
+
+State 215
+
+   85 GeneralList: GeneralList error IDENTIFIER •
+
+    $default  reduce using rule 85 (GeneralList)
+
+
+State 216
+
+   82 GeneralList: GeneralList ',' NUMBER •
+
+    $default  reduce using rule 82 (GeneralList)
+
+
+State 217
+
+   83 GeneralList: GeneralList ',' IDENTIFIER •
+
+    $default  reduce using rule 83 (GeneralList)
+
+
+State 218
+
+   40 ConditionalStatement: error Condition THEN Statement ELSE Statement •
+
+    $default  reduce using rule 40 (ConditionalStatement)
+
+
+State 219
+
+   27 Statement: IDENTIFIER '[' NUMBER ']' ASGN Expression •
+   87 Expression: Expression • '+' Expression
+   88           | Expression • '-' Expression
+   89           | Expression • '*' Expression
+   90           | Expression • '/' Expression
+   91           | Expression • '%' Expression
+
+    '+'  shift, and go to state 125
+    '-'  shift, and go to state 126
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+    '%'  shift, and go to state 129
+
+    $default  reduce using rule 27 (Statement)
+
+
+State 220
+
+   41 ConditionalStatement: IF Condition error Statement ELSE Statement •
+
+    $default  reduce using rule 41 (ConditionalStatement)
+
+
+State 221
+
+   42 ConditionalStatement: IF Condition THEN Statement error Statement •
+
+    $default  reduce using rule 42 (ConditionalStatement)
+
+
+State 222
+
+   37 ConditionalStatement: IF Condition THEN Statement ELSE Statement •
+
+    $default  reduce using rule 37 (ConditionalStatement)
+
+
+State 223
+
+   49 LoopStatement: FOR IDENTIFIER UPTO Expression error Statement •
+
+    $default  reduce using rule 49 (LoopStatement)
+
+
+State 224
+
+   46 LoopStatement: FOR IDENTIFIER UPTO Expression DO Statement •
+
+    $default  reduce using rule 46 (LoopStatement)
+
+
+State 225
+
+   50 LoopStatement: FOR IDENTIFIER DOWNTO Expression error Statement •
+
+    $default  reduce using rule 50 (LoopStatement)
+
+
+State 226
+
+   47 LoopStatement: FOR IDENTIFIER DOWNTO Expression DO Statement •
+
+    $default  reduce using rule 47 (LoopStatement)
+
+
+State 227
+
+   22 FuncDecl: FUNCTION IDENTIFIER '(' IdentifierList ')' ';' Block ';' •
+
+    $default  reduce using rule 22 (FuncDecl)

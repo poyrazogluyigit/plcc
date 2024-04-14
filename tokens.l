@@ -1,15 +1,16 @@
-%% 
+%{
 #include <string.h>
-// C code definitions
+#include "y.tab.h"
+%}
 %%
-// keywords
+
 "const"             {return CONST;}
 "var"               {return VAR;}
 "array"             {return ARRAY;}
 "procedure"         {return PROCEDURE;}
 "function"          {return FUNCTION;}
 "call"              {return CALL;} 
-"begin"             {return BEGIN;}
+"begin"             {return BEGN;}
 "end"               {return END;}
 "if"                {return IF;}
 "then"              {return THEN;}
@@ -26,11 +27,11 @@
 "write"             {return WRITE;}
 "writeline"         {return WRITELINE;}
 
-// regex
-[a-zA-Z][a-zA-Z0-9]+ {yylval = yytext; return IDENTIFIER; } // identifier terminal
-[0-9]+ { yylval = atoi(yytext); return NUMBER; } // Number terminal
 
-"=" {return EQ};
+[a-zA-Z][a-zA-Z0-9]* {return IDENTIFIER; } // identifier terminal
+[0-9]+ {return NUMBER;} // Number terminal
+
+"=" {return EQ;}
 "<>" {return IDK;}
 ">" {return GT;}
 "<" {return LT;}
@@ -38,9 +39,10 @@
 ">=" {return GEQ;}
 ":=" {return ASGN;}
 
-[ \t\n]+   ; // ignore whitespace
-. return yytext[0]; 
+[ \t]+   ;
+[\n]        {yylineno++;} 
+. {return yytext[0];} 
 
 
 %% 
-// user defined
+
