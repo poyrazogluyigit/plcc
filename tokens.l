@@ -1,6 +1,8 @@
 %{
 #include <string.h>
 #include "y.tab.h"
+extern int yylex();
+extern int yychar;
 %}
 %%
 
@@ -44,5 +46,4 @@
 . {return yytext[0];} 
 
 
-%% 
-
+%%

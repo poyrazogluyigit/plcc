@@ -3,6 +3,7 @@
 void yyerror(char *s);
 extern FILE * yyin;
 extern int yylineno;
+extern int yylex();
 // int yydebug = 1;
 %}
 
@@ -92,27 +93,25 @@ Statement :
             | LoopStatement
             | ControlStatement
             | IOStatement
-            |
+            |            
+            | error END             {yyerror("Invalid statement"); yyerrok;}
+            | error ';'             {yyerror("Invalid statement"); yyerrok;}
+            | error                 {yyerror("Invalid statement");}
+
             ;
+
+// statement FOLLOW = [IDENTIFIER CALL BEGIN IF WHILE FOR BREAK RETURN WRITELINE READ READLINE %empty '.' ';' END ELSE]
 
 
 ConditionalStatement:   IF Condition THEN Statement %prec IFX
-                        | IF Condition THEN Statement ELSE Statement  
-                        | error Condition THEN Statement %prec IFX              {yyerror("Invalid conditional construct"); yyerrok;}
-                        | IF Condition error Statement %prec IFX                {yyerror("Invalid conditional construct"); yyerrok;}
-                        | error Condition THEN Statement ELSE Statement         {yyerror("Invalid conditional construct"); yyerrok;}
-                        | IF Condition error Statement ELSE Statement           {yyerror("Invalid conditional construct"); yyerrok;}
-                        | IF Condition THEN Statement error Statement           {yyerror("Invalid conditional construct"); yyerrok;}
+                        | IF Condition THEN Statement ELSE Statement
                         ;
 
 LoopStatement:   WHILE Condition DO Statement                                               
-            //  | error Condition DO Statement                                              {yyerror("Invalid loop construct"); yyerrok;}
-                | WHILE Condition error Statement                                           {yyerror("Invalid loop construct"); yyerrok;}
                 | FOR IDENTIFIER UPTO Expression DO Statement                               
-                | FOR IDENTIFIER DOWNTO Expression DO Statement
-          //    | error Expression DO Statement                                             {yyerror("Invalid loop construct"); yyerrok;}                         
-                | FOR IDENTIFIER UPTO Expression error Statement                            {yyerror("Invalid loop construct"); yyerrok;}
-                | FOR IDENTIFIER DOWNTO Expression error Statement                          {yyerror("Invalid loop construct"); yyerrok;}                              
+                | FOR IDENTIFIER DOWNTO Expression DO Statement 
+                | WHILE error {yyerror("Invalid while construct"); yyclearin;} Statement 
+                | FOR error {yyerror("Invalid for construct"); yyclearin;} Statement                                                        
                 ;
             
 IOStatement: 
@@ -127,10 +126,6 @@ IOStatement:
 
 FuncCall:   
         CALL IDENTIFIER '(' GeneralList ')' 
-        | error IDENTIFIER '(' GeneralList ')'                          {yyerror("Invalid function call"); yyerrok;}
-        | CALL error '(' GeneralList ')'                                {yyerror("Invalid function call"); yyerrok;}
-        | CALL IDENTIFIER error GeneralList ')'                         {yyerror("Invalid function call"); yyerrok;}
-        | CALL IDENTIFIER '(' GeneralList error                         {yyerror("Invalid function call"); yyerrok;}
         ;
 
 
@@ -158,7 +153,7 @@ Condition :
 
 ConstArray: NUMBER
             | ConstArray ',' NUMBER
-            | ConstArray error NUMBER               {yyerror("Invalid list"); yyerrok;}
+            | ConstArray error NUMBER               {yyerror("Invalid list construct"); yyerrok;}
             ;
 
 
@@ -180,7 +175,6 @@ Expression  :   Expression '+' Expression
                 | Expression '%' Expression
                 | '+' Expression    %prec UPLUS
                 | '-' Expression    %prec UMINUS
-                | error Expression                      {yyerror("Invalid operator"); yyerrok;}
                 | IDENTIFIER
                 | IDENTIFIER '[' NUMBER ']'
                 | NUMBER
@@ -196,7 +190,7 @@ void yyerror(char *s) {
 }
 
 
-int main(char * argc, char ** argv){
+int main(int argc, char ** argv){
 
     yyin = fopen(argv[1], "r");
     yyparse();
