@@ -1,0 +1,113 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{cite}
+\usepackage{mathtools}
+\usepackage{tcolorbox}
+\usepackage{wrapfig,lipsum,booktabs}
+\usepackage[nohead, nomarginpar, margin=0.4in, foot=.25in]{geometry}
+%\doublespacing
+\usepackage{graphicx} % Required for inserting images
+
+\title{CMPE 425 Project-1 Report}
+\author{Yiğit Kağan Poyrazoğlu - Hasan Kerem Şeker - Mert Cengiz}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Modified Grammar}
+
+\begin{tcolorbox}
+
+Program $\implies$ Block $'.'$   \\
+Block $\implies$ ConstDecl VarDec ArrayDecl ProcDecl FuncDef Statement \\ 
+ConstDecl $\implies$ $'const'$ ConstAssignmentList $';'$ $ | $ $\epsilon$ \\
+
+ConstAssignmentList $\implies$ $identifier$ $'='$ $number$  
+ $|$ $‘array’$ $identifier$ $'='$ $'['$ ConstArray $']'$ \\ \indent $|$ ConstAssignmentList $','$ $identifier$ $'='$ $number$ \\ \indent \indent
+$|$ ConstAssignmentList $','$ $'array'$ $identifier$ $'='$ $'['$ ConstArray $']'$ \\
+
+VarDecl $\implies$ $'var'$ IdentifierList $';'$ $|$  $\epsilon$
+\\ ArrayDecl $\implies$ $‘array’$ IdentifierList $';'$ $|$ $\epsilon$ \\
+IdentifierList $\implies$ $identifier$ 
+                $|$ IdentifierList $','$ $identifier$ \\
+ProcDecl $\implies$ ProcDecl $'procedure'$ identifier $';'$ Block $';'$ $|$ $\epsilon$ \\
+FuncDef $\implies$ $'function'$ identifier $'('$ IdentifierList $')'$ $';'$ Block $';'$ $|$ $\epsilon$ \\
+
+Statement $\implies$ identifier $':='$ Expression 
+\\  $|$ $identifier$ $':='$ ArrayExpression 
+\\  $|$ $identifier$ $'['$ number $']'$ $':='$ Expression
+\\  $|$ $'call'$ identifier
+\\  $|$ $'begin'$ StatementList $'end'$
+\\  $|$ $'if'$ Condition $'then'$ Statement ElseStatement
+\\  $|$ $'while'$ Condition $'do'$ Statement
+\\  $|$ $'for'$ identifier Quantifier Expression $'do'$ Statement 
+\\  $|$ ControlStatement         
+\\  $|$ IOStatement              
+\\  $|$ FuncCall 
+\\  $|$ $\epsilon$ \\
+
+ElseStatement $\implies$ $'else'$ Statement $|$ $\epsilon$ \\
+Quantifier $\implies$ $‘up to’$ $|$ $‘down to’$       \\       
+FuncCall $\implies$ $identifier$ $'('$ GeneralList $')'$ \\
+IOStatement $\implies$ $'read'$ $'('$ identifier$')'$
+$|$ $'write'$ $'('$ identifier$')'$            
+$|$ $'writeline'$ $'('$identifier$')'$ \\
+ControlStatement $\implies$ $'break'$ $|$ $'return'$
+$|$ $'return'$ Expression \\
+StatementList $\implies$ Statement $|$ StatementList $';'$ Statement \\
+Condition $\implies$ $'odd'$ Expression $|$ Expression Relation Expression \\
+Relation $\implies$ $'='$ $|$ $'<>'$ $|$ $'<'$ $|$ $'>'$ $|$ $'<='$ $|$ $'>='$ \\
+ArrayExpression $\implies$ $'['$GeneralList$']'$ \\
+ConstArray $\implies$ $number$ $,$ NumberRemaining \\
+NumberRemaining $\implies$ $number$ $,$ NumberRemaining $|$ $\epsilon$ \\
+GeneralList $\implies$ $number$ $,$ Remaining
+      $|$ $identifier$ $,$ Remaining \\
+Remaining $\implies$ $number$ $,$ Remaining 
+           $|$ $identifier$ $,$ Remaining 
+           $|$ $\epsilon$ \\
+Expression $\implies$ Term 
+            $|$ AddSubOperator Term
+            $|$ Expression AddSubOperator Term \\
+AddSubOperator $\implies$ $'+'$ $|$ $'-'$ \\
+Term $\implies$ Factor 
+      $|$ Term MulDivModOperator Factor \\
+
+\end{tcolorbox}
+
+\begin{tcolorbox}
+MulDivModOperator $\implies$ $'*'$ $|$ $'/'$ $|$ $'\%'$
+\\ Factor $\implies$ identifier 
+        $|$ identifier $‘[‘$ $ number$ $‘]’$
+        $|$ FuncCall
+        $|$ $number$ 
+        $|$ $'('$ Expression $')'$ \\
+\end{tcolorbox}
+ 
+\section{Features Implemented In Grammar}
+With the help of the modified grammar which can be seen in the grammar above, these features are available in the program: \\
+$1)$ If - Then - Else Statements: Implemented by modifying "Statement" \\
+$2)$ For Loops: Implemented by modifying "Statement" \\
+$3)$ Break Statement: Implemented by adding "ControlStatement" non-terminal, which is put into "Statement" \\
+$4)$ Arrays:  Implemented in two parts: array declarations are added similar to variable declarations (including the constant ones), and accessing to an array feature is included by adding an expansion to "Statement" non-terminal \\
+$5)$ Functions: Implemented by adding a function declaration block to the "Block" non-terminal, which is similar to procedure declaration block except the facts that function declarations are not recursive and they take an identifier list as arguments \\
+$6)$ Return Statement:  Implemented by adding "ControlStatement" non-terminal, which is put into "Statement", which is just the same mechanism as Break Statements \\
+$7)$ Mod Operation: Implemented by changing "MulDivOperator" into "MulDivModOperator" as modulo operation has the same precedence as the multiplication and division operators \\
+$8)$ I/O statements: Implementing by adding "IOStatement" non-terminal, which is put into "Statement" 
+
+\section{Features Implemented In The Parser}
+Some features could not be implemented in the grammar but they are available in the parser. They can be listed as: \\
+$1)$ Comments: In the lexical analysis (LEX) , ignoring every character after seeing $"/*"$ symbol until a $"*/"$ symbol is seen is implemented \\
+$2)$ Error Handling: For error handling, YACC's error handling tool is used. Special "error" token is specified many places where possible errors might occur, and the error message is printed to the standard error file. 
+
+\section{Features Could Not Be Implemented In This Project}
+There are two main features that could not be implemented in the project, which may be expresses as: \\
+$1)$ As in this project only lexical analysis is performed, no errors related to the semantics of any programs could detected. \\
+$2)$ If a non-terminal could not be initiated due to a syntactical error, the non-terminal before raises an error.
+
+\end{document}

@@ -43,7 +43,19 @@ extern int yychar;
 
 [ \t]+   ;
 [\n]        {yylineno++;} 
-. {return yytext[0];} 
 
-
-%%
+"."              { return '.'; }
+","              { return ','; }
+";"              { return ';'; }
+"("              { return '('; }
+")"              { return ')'; }
+"+"              { return '+'; }
+"-"              { return '-'; }
+"*"              { return '*'; }
+"/"              { return '/'; }
+"%"              { return '%'; }
+"!"              { return '!'; }
+"]"              { return ']'; }
+"["              { return '['; }
+\/\*((.|\n)*?)\*\/ { /* Ignore comments*/ }
+.                { fprintf(stderr, "Unexpected character: %s\n", yytext); exit(1); }
