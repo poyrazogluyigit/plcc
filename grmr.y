@@ -35,9 +35,12 @@ extern int yylex();
 
 %%
 // Rules
-Program : Block '.' ;    // '>''='   
+Program : TopBlock '.' ;    // '>''='   
 
-Block : ConstDecl VarDecl ArrayDecl ProcDecl FuncDecl Statement ;
+TopBlock : ConstDecl VarDecl ArrayDecl ProcDecl FuncDecl Statement ;
+
+Block : ConstDecl VarDecl ArrayDecl Statement ;
+
 
 ConstDecl : CONST ConstAssignmentList ';' 
             |
@@ -85,7 +88,7 @@ FuncDecl:
 Statement : 
             IDENTIFIER ASGN Expression 
             | IDENTIFIER ASGN '[' GeneralList ']'
-            | IDENTIFIER '[' NUMBER ']' ASGN Expression
+            | IDENTIFIER '[' Expression ']' ASGN Expression
             | CALL IDENTIFIER
             | FuncCall
             | BEGN StatementList END
@@ -97,7 +100,6 @@ Statement :
             | error END             {yyerror("Invalid statement"); yyerrok;}
             | error ';'             {yyerror("Invalid statement"); yyerrok;}
             | error                 {yyerror("Invalid statement");}
-
             ;
 
 // statement FOLLOW = [IDENTIFIER CALL BEGIN IF WHILE FOR BREAK RETURN WRITELINE READ READLINE %empty '.' ';' END ELSE]
@@ -176,7 +178,7 @@ Expression  :   Expression '+' Expression
                 | '+' Expression    %prec UPLUS
                 | '-' Expression    %prec UMINUS
                 | IDENTIFIER
-                | IDENTIFIER '[' NUMBER ']'
+                | IDENTIFIER '[' Expression ']'
                 | NUMBER
                 | '(' Expression ')'
                 | FuncCall

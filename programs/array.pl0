@@ -1,0 +1,15 @@
+const x = 1, array a = [1, 2, 3, 4, 5];
+
+var y, z;
+
+array b;
+
+begin
+    b := [1, 2, 3, 0, 0];
+    y := 0;
+    y := b[0;
+    y := b[2];
+    y := a 3];
+    while y < 5 do 
+        b[y] := b[y] + a[y]
+end.

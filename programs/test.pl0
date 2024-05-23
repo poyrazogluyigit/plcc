@@ -1,11 +1,14 @@
+const a = 1, b = 2;
+
 var i, s;
 
 begin
-  i := 0a;
+  i := 0;
   s := 0;
-  while i < 5 dog
+  while i < 5 do
   begin
-    i := i + 1
+    i := i + 1;
     s := s + i * i
   end
 end.
+

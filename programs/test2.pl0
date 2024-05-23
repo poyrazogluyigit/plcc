@@ -6,6 +6,7 @@ var i;
 begin
 	ret := 1;
 	i := 2;
+
 	while i < arg do
 	begin
 		if arg / i * i = arg then

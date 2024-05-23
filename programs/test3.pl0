@@ -56,6 +56,12 @@ begin
   end
 end;
 
+function fn(a, b);
+begin
+  a := a + b;
+  return a;
+end;
+
 begin
   read(x); read(y); call multiply; writeline(z);
   read(x); read(y); call divide; writeline(q); writeline(r);
