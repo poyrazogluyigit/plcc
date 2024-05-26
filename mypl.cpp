@@ -12,7 +12,6 @@ extern int error;
 
 int main(int argc, char *argv[])
 {
-    std::cout << 1 << std::endl;
     yyparse() ; 
     gen_llvm_ir() ; 
     return 0;
@@ -20,9 +19,9 @@ int main(int argc, char *argv[])
 
 void gen_llvm_ir()
 {
-    std::cout << 1234 << std::endl;
-   std::map<string, string >::iterator si ; 
-   std::vector<string>::iterator vi ;
+   std::cout << 1234 << std::endl;
+   std::map<std::string, std::string >::iterator si ; 
+   std::vector<std::string>::iterator vi ;
 
    std::cout << "; ModuleID = 'calculator'" << std::endl ; 
    std::cout << "declare i32 @printf(i8*, ...)" << std::endl ;
@@ -91,8 +90,8 @@ char *operation(string op,string t1,string t2)
   string stm ; 
   char buf[20] ;
   string tmpvar ; 
-std::cout << 669 << std::endl;
-  sprintf(buf,"%d",tmpno) ;
+  std::cout << 669 << std::endl;
+  snprintf(buf, 20,"%d",tmpno) ;
 
   tmpvar = string("%") + string(buf) ;
   symtab[tmpvar] = tmpvar ; 
@@ -108,7 +107,7 @@ char *odd(string t){
     char buf[20];
     string andReg, cmpReg; 
     
-    sprintf(buf,"%d",tmpno);
+    snprintf(buf, 20, "%d",tmpno);
     
     andReg = string("%") + string(buf);
     symtab[andReg] = andReg; 
@@ -116,7 +115,7 @@ char *odd(string t){
     stm = andReg + string(" = and i32 ") + t + string(", 1");
     llvmcode.push_back(stm);
 
-    sprintf(buf,"%d",tmpno);
+    snprintf(buf, 20, "%d",tmpno);
     cmpReg = string("%") + string(buf);
     symtab[cmpReg] = cmpReg;
     tmpno++;
@@ -132,8 +131,8 @@ char *condition(string op, string t1, string t2)
   string stm ; 
   char buf[20] ;
   string tmpvar ; 
-std::cout << 66 << std::endl;
-  sprintf(buf,"%d",tmpno) ;
+  std::cout << 66 << std::endl;
+  snprintf(buf, 20, "%d",tmpno) ;
 
   tmpvar = string("%") + string(buf) ;
   symtab[tmpvar] = tmpvar ; 
@@ -150,7 +149,7 @@ char *loadvariable(string t1)
   char buf[20] ;
   string tmpvar ; 
  
-  sprintf(buf,"%d",tmpno) ;
+  snprintf(buf,20, "%d",tmpno) ;
 
   tmpvar = string("%") + string(buf) ;
   symtab[tmpvar] = tmpvar ; 
@@ -161,13 +160,13 @@ char *loadvariable(string t1)
 }
 
 void constAssign(string t, string val){
-    std::cout << 19898 << std::endl;
-    constAssignments.push_back(string("@") + t + string(" = global i32 " + val));
+    // std::cout << t << std::endl;
+    constAssignments.push_back(string("@") + t + string(" = global i32 ") + val);
 }
 
 void  assignment(string lhs,string rhs) 
 {
-    std::cout << 1878 << std::endl;
+  std::cout << 1878 << std::endl;
   string stm ; 
 
   stm = string("store i32 ") + rhs + string(", i32* %") + lhs ; 

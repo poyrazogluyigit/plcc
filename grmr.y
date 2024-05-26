@@ -60,7 +60,7 @@ ConstDecl : CONST ConstAssignmentList ';'
 
 
 ConstAssignmentList : 
-                        IDENTIFIER EQ NUMBER                                    {constAssign($1, $3);}                                   
+                        IDENTIFIER EQ NUMBER                                    {std::cout << ($1 == NULL) << std::endl;} // {constAssign($1, $3);}                                   
                         | ARRAY IDENTIFIER EQ  '[' ConstArray ']'                               
                         | ConstAssignmentList ',' IDENTIFIER EQ NUMBER          {constAssign($3, $5);}                        
                         | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']'        
@@ -189,7 +189,7 @@ Expression  :   Expression '+' Expression                       {$$ = operation(
                 | '+' Expression    %prec UPLUS                 { $$ = $2; }
                 | '-' Expression    %prec UMINUS                { $$ = operation(string("sub"),string("0"),string($2)); }
                 | IDENTIFIER                                    {$$ = loadvariable(string($1));}
-                | IDENTIFIER '[' Expression ']'                 {}
+                | IDENTIFIER '[' Expression ']'                
                 | NUMBER                                        { $$ = $1 ; }
                 | '(' Expression ')'                            { $$ = $2 ; }
                 | FuncCall

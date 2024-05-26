@@ -31,7 +31,7 @@ extern int yychar;
 
 
 [a-zA-Z][a-zA-Z0-9]* {return IDENTIFIER; } // identifier terminal
-[0-9]+ {return NUMBER;} // Number terminal
+[0-9]+ {yylval.dval = symlook(yytext) ; return NUMBER;} // Number terminal
 
 "=" {return EQ;}
 "<>" {return IDK;}
