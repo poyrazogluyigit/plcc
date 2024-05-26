@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 
 void gen_llvm_ir()
 {
-    std::cout << 12345 << std::endl;
+    std::cout << 1234 << std::endl;
    std::map<string, string >::iterator si ; 
    std::vector<string>::iterator vi ;
 
