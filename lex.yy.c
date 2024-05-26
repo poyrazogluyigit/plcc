@@ -511,7 +511,7 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "tokens.l"
 #line 2 "tokens.l"
-#include <string.h>
+#include "defs.h"
 #include "y.tab.h"
 extern int yylex();
 extern int yychar;

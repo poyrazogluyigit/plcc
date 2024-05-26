@@ -1,5 +1,5 @@
 # Compiler and flags
-CC = gcc
+CC = g++
 LEX = flex -I
 YACC = bison -dy
 
@@ -10,8 +10,11 @@ DEBUG_FLAGS = --debug --verbose -k # -Wcounterexamples --report all
 CFLAGS = -DYYDEBUG=1
 
 # Target for the plcc executable
-plcc: y.tab.o lex.yy.o
-	$(CC) $(CFLAGS) y.tab.o lex.yy.o -ly -ll -lm -o plcc
+mypl: y.tab.o lex.yy.o mypl.o
+	$(CC) $(CFLAGS) mypl.o y.tab.o lex.yy.o -ly -ll -lm -o mypl
+
+mypl.o: mypl.cpp
+	$(CC) -c $(CFLAGS) mypl.cpp
 
 # Rule to compile lex.yy.o and y.tab.o from their respective sources
 lex.yy.o y.tab.o: lex.yy.c y.tab.h

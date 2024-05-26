@@ -1,14 +1,25 @@
 %{
-#include <stdio.h>
-void yyerror(char *s);
+#include "defs.h"
+
+extern std::map<std::string, int> symbolTable;
+void yyerror(char* v);
 extern FILE * yyin;
 extern int yylineno;
 extern int yylex();
+int error = 0;
 // int yydebug = 1;
 %}
 
+%union {
+        char* dval;
+}
+
+%type <dval> Expression GeneralList Condition ConstAssignmentList 
+%type <dval> StatementList
+
+
 // tokens
-%token NUMBER IDENTIFIER
+%token <dval> NUMBER IDENTIFIER
 %token CONST 
 %token VAR
 %token ARRAY
@@ -47,11 +58,12 @@ ConstDecl : CONST ConstAssignmentList ';'
             | error ';'                          {yyerror("Invalid const declaration"); yyerrok;}
             ;  
 
+
 ConstAssignmentList : 
-                        IDENTIFIER EQ NUMBER
-                        | ARRAY IDENTIFIER EQ  '[' ConstArray ']'
-                        | ConstAssignmentList ',' IDENTIFIER EQ NUMBER
-                        | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']'
+                        IDENTIFIER EQ NUMBER                                    {constAssign($1, $3);}                                   
+                        | ARRAY IDENTIFIER EQ  '[' ConstArray ']'                               
+                        | ConstAssignmentList ',' IDENTIFIER EQ NUMBER          {constAssign($3, $5);}                        
+                        | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']'        
                         ;
 
 VarDecl:
@@ -61,41 +73,41 @@ VarDecl:
 ;
 
 ArrayDecl: 
-            ARRAY IdentifierList ';' 
+            ARRAY '{' NUMBER '}' IdentifierList ';' ArrayDecl
             | error ';'                             {yyerror("Invalid array declaration"); yyerrok;} 
             |
 ;
 
 IdentifierList: 
-            IDENTIFIER 
-            | IdentifierList ',' IDENTIFIER
+            IDENTIFIER                                      // {setSymbol(std::string($1), scope);}   declare()
+            | IdentifierList ',' IDENTIFIER                 // {setSymbol(std::string($3), scope);}
             |
 ;
 
 ProcDecl:
-            ProcDecl PROCEDURE IDENTIFIER ';' Block ';' 
-            | error ';'                             {yyerror("Invalid procedure declaration"); yyerrok;} 
+            ProcDecl  PROCEDURE IDENTIFIER ';' Block ';' 
+            | error ';'                  {yyerror("Invalid procedure declaration"); yyerrok;} 
             |
 ;
 
 FuncDecl:
             FUNCTION IDENTIFIER '(' IdentifierList ')' ';' Block ';' 
-            | error ';'                             {yyerror("Invalid function declaration"); yyerrok;} 
+            | error ';'                  {yyerror("Invalid function declaration"); yyerrok;} 
             |    
 ;           
 
 
 Statement : 
-            IDENTIFIER ASGN Expression 
-            | IDENTIFIER ASGN '[' GeneralList ']'
+            IDENTIFIER ASGN Expression                  {assignment($1, $3);}
+//            | IDENTIFIER ASGN  '[' GeneralList ']'
             | IDENTIFIER '[' Expression ']' ASGN Expression
             | CALL IDENTIFIER
             | FuncCall
             | BEGN StatementList END
-            | ConditionalStatement
-            | LoopStatement
-            | ControlStatement
-            | IOStatement
+            | ConditionalStatement              // not done
+            | LoopStatement             // not done
+            | ControlStatement          // not done
+            | IOStatement               // done
             |            
             | error END             {yyerror("Invalid statement"); yyerrok;}
             | error ';'             {yyerror("Invalid statement"); yyerrok;}
@@ -117,9 +129,9 @@ LoopStatement:   WHILE Condition DO Statement
                 ;
             
 IOStatement: 
-            READ'(' IDENTIFIER ')'
-            | WRITE'(' IDENTIFIER ')'
-            | WRITELINE '(' IDENTIFIER ')'
+            READ'(' IDENTIFIER ')'                              {read($3);}
+            | WRITE'(' IDENTIFIER ')'                           {write($3);}
+            | WRITELINE '(' IDENTIFIER ')'                      {writeline($3);}
             | READ '(' error ')' {yyerror("Invalid read() call"); yyerrok;}
             | WRITE '(' error ')' {yyerror("Invalid write() call"); yyerrok;}
             | WRITELINE '(' error ')' {yyerror("Invalid writeline() call"); yyerrok;}
@@ -142,14 +154,13 @@ StatementList:
             ;
 
 Condition :
-            ODD Expression 
-            | Expression EQ Expression
-            | Expression IDK Expression
-            | Expression GT Expression
-            | Expression LT Expression
-            | Expression LEQ Expression
-            | Expression GEQ Expression
-            | Expression ASGN Expression
+            ODD Expression                         {$$ = odd(string($2));}
+            | Expression EQ Expression             {$$ = condition(string("eq"), string($1), string($3));}
+            | Expression IDK Expression            {$$ = condition(string("ne"), string($1), string($3));}
+            | Expression GT Expression             {$$ = condition(string("sgt"), string($1), string($3));}
+            | Expression LT Expression             {$$ = condition(string("slt"), string($1), string($3));}
+            | Expression LEQ Expression            {$$ = condition(string("sle"), string($1), string($3));}
+            | Expression GEQ Expression            {$$ = condition(string("sge"), string($1), string($3));}
             ;
 
 
@@ -160,7 +171,7 @@ ConstArray: NUMBER
 
 
 GeneralList:    NUMBER
-                | IDENTIFIER
+                | IDENTIFIER                            {$$ = loadvariable(string($1));}
                 | GeneralList ',' NUMBER
                 | GeneralList ',' IDENTIFIER
                 | GeneralList error NUMBER              {yyerror("Invalid list construct"); yyerrok;}
@@ -170,32 +181,18 @@ GeneralList:    NUMBER
 
 
 
-Expression  :   Expression '+' Expression
-                | Expression '-' Expression
-                | Expression '*' Expression
-                | Expression '/' Expression
-                | Expression '%' Expression
-                | '+' Expression    %prec UPLUS
-                | '-' Expression    %prec UMINUS
-                | IDENTIFIER
-                | IDENTIFIER '[' Expression ']'
-                | NUMBER
-                | '(' Expression ')'
+Expression  :   Expression '+' Expression                       {$$ = operation(string("add"), string($1), string($3));}
+                | Expression '-' Expression                     {$$ = operation(string("sub"),string($1),string($3)) ;}
+                | Expression '*' Expression                     {$$ = operation(string("mul"),string($1),string($3)) ;}
+                | Expression '/' Expression                     {$$ = operation(string("sdiv"),string($1),string($3)) ;}
+                | Expression '%' Expression                     {$$ = operation(string("srem"), string($1), string($3));}
+                | '+' Expression    %prec UPLUS                 { $$ = $2; }
+                | '-' Expression    %prec UMINUS                { $$ = operation(string("sub"),string("0"),string($2)); }
+                | IDENTIFIER                                    {$$ = loadvariable(string($1));}
+                | IDENTIFIER '[' Expression ']'                 {}
+                | NUMBER                                        { $$ = $1 ; }
+                | '(' Expression ')'                            { $$ = $2 ; }
                 | FuncCall
                 ;
 
 %%
-// User Subroutines
-
-void yyerror(char *s) {
-    fprintf(stderr, "line %d: %s\n", yylineno, s);
-}
-
-
-int main(int argc, char ** argv){
-
-    yyin = fopen(argv[1], "r");
-    yyparse();
-    fclose(yyin);
-
-}

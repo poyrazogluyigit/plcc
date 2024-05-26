@@ -1,5 +1,5 @@
 %{
-#include <string.h>
+#include "defs.h"
 #include "y.tab.h"
 extern int yylex();
 extern int yychar;
