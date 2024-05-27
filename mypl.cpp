@@ -17,9 +17,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void gen_llvm_ir()
-{
-   std::cout << 1234 << std::endl;
+void gen_llvm_ir(){
    std::map<std::string, std::string >::iterator si ; 
    std::vector<std::string>::iterator vi ;
 
@@ -33,8 +31,6 @@ void gen_llvm_ir()
     for (vi = constAssignments.begin(); vi != constAssignments.end(); vi++){
         std::cout << *vi << std::endl;
     }
-
-   std::cout << 525 << std::endl;
 
    std::cout << "define i32 @main() {"  << std::endl ;
 
@@ -51,9 +47,7 @@ void gen_llvm_ir()
 
 }
 
-void write(string t) 
-{
-    std::cout << 252 << std::endl;
+void write(string t) {
   string stm ; 
 
   stm = string("call i32 (i8*, ...) @printf(i8* getelementptr ([3 x i8], [3 x i8]* @write.str, i32 0, i32 0), i32 ") +
@@ -62,9 +56,7 @@ void write(string t)
   tmpno++ ; 
 }
 
-void writeline(string t) 
-{
-    std::cout << 36 << std::endl;
+void writeline(string t) {
   string stm ; 
   
   stm = string("call i32 (i8*, ...) @printf(i8* getelementptr ([4 x i8], [4 x i8]* @writeline.str, i32 0, i32 0), i32 ") +
@@ -75,9 +67,7 @@ void writeline(string t)
 
 // copilot generated - dont trust
 void read(string t){
-    std::cout << 1878787878787 << std::endl;
     string stm ; 
-    std::cout << 17 << std::endl;
     stm = string("call i32 (i8*, ...) @scanf(i8* getelementptr ([3 x i8], [3 x i8]* @read.str, i32 0, i32 0), i32* ") +
             t + string(" )")   ; 
     llvmcode.push_back(stm) ; 
@@ -85,12 +75,10 @@ void read(string t){
     
 }
 
-char *operation(string op,string t1,string t2) 
-{
+char *operation(string op,string t1,string t2) {
   string stm ; 
   char buf[20] ;
   string tmpvar ; 
-  std::cout << 669 << std::endl;
   snprintf(buf, 20,"%d",tmpno) ;
 
   tmpvar = string("%") + string(buf) ;
@@ -102,7 +90,6 @@ char *operation(string op,string t1,string t2)
 }
 
 char *odd(string t){
-    std::cout << 188888 << std::endl;
     string stm, stm2; 
     char buf[20];
     string andReg, cmpReg; 
@@ -125,13 +112,11 @@ char *odd(string t){
     return ((char *) symtab[cmpReg].c_str());
 }
 
-char *condition(string op, string t1, string t2) 
-{
+char *condition(string op, string t1, string t2) {
     
   string stm ; 
   char buf[20] ;
   string tmpvar ; 
-  std::cout << 66 << std::endl;
   snprintf(buf, 20, "%d",tmpno) ;
 
   tmpvar = string("%") + string(buf) ;
@@ -142,9 +127,7 @@ char *condition(string op, string t1, string t2)
   return((char *) symtab[tmpvar].c_str()) ; 
 }
 
-char *loadvariable(string t1) 
-{
-    std::cout << 1989098 << std::endl;
+char *loadvariable(string t1) {
   string stm ; 
   char buf[20] ;
   string tmpvar ; 
@@ -166,16 +149,14 @@ void constAssign(string t, string val){
 
 void  assignment(string lhs,string rhs) 
 {
-  std::cout << 1878 << std::endl;
   string stm ; 
 
   stm = string("store i32 ") + rhs + string(", i32* %") + lhs ; 
   llvmcode.push_back(stm) ; 
 }
 
-int yyerror(char *msg)
+int yyerror(string msg)
 {
-    std::cout << 1909 << std::endl;
    std::cout << "Line: " << lineno << " " << msg << std::endl ;
    error = 1;
    exit(0) ;
@@ -186,9 +167,7 @@ int yyerror(char *msg)
 // we store the string for variable names, constants, temporary vars as 
 // string 
 char *symlook(char *cs)
-{
-    std::cout << 199 << std::endl;
-    
+{    
     string s = string(cs) ; 
     symtab[s] = s ;
     return((char *) symtab[s].c_str()) ; 
@@ -196,7 +175,6 @@ char *symlook(char *cs)
 
 bool is_tmp_or_integer(string & token) 
 {
-    std::cout << 99 << std::endl;
     bool isnumber ;
 
     string::const_iterator k = token.begin(); 
