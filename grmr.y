@@ -129,9 +129,9 @@ LoopStatement:   WHILE Condition DO Statement
                 ;
             
 IOStatement: 
-            READ'(' IDENTIFIER ')'                              {read($3);}
-            | WRITE'(' IDENTIFIER ')'                           {write($3);}
-            | WRITELINE '(' IDENTIFIER ')'                      {writeline($3);}
+            READ'(' Expression ')'                              {read($3);}
+            | WRITE'(' Expression ')'                           {write($3);}
+            | WRITELINE '(' Expression ')'                      {writeline($3);}
             | READ '(' error ')' {yyerror("Invalid read() call"); yyerrok;}
             | WRITE '(' error ')' {yyerror("Invalid write() call"); yyerrok;}
             | WRITELINE '(' error ')' {yyerror("Invalid writeline() call"); yyerrok;}
