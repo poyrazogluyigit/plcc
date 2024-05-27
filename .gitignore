@@ -1,2 +1,8 @@
 llvm_tests/
 old/
+*.o
+*.yy.c
+y.tab.c
+y.tab.h
+mypl
+myml
