@@ -2,7 +2,8 @@
 #include "defs.h"
 
 extern std::map<std::string, int> symbolTable;
-void yyerror(char* v);
+std::string varname;
+void yyerror(string v);
 extern FILE * yyin;
 extern int yylineno;
 extern int yylex();
@@ -58,11 +59,16 @@ ConstDecl : CONST ConstAssignmentList ';'
             | error ';'                          {yyerror("Invalid const declaration"); yyerrok;}
             ;  
 
-
+// nedenini çözemediğim bir hata var burada:
+// ortadaki kuralın uyguladığı şekilde değişken adını kaydetmediğim takdirde
+// sondaki constAssign() fonksiyonunda $1 bütün ifadeyi alıyor.
+// örnek: const a = 5; ise $1 -> a = 5 oluyor.
+// buradaki şekilde yaptığım takdirde $1 -> a oluyor.
+// aynı durum benzer bir uygulama yaptığım her kuralda geçerli.
 ConstAssignmentList : 
-                        IDENTIFIER EQ NUMBER                                    {std::cout << ($1 == NULL) << std::endl;} // {constAssign($1, $3);}                                   
+                        IDENTIFIER {varname = string($1);} EQ NUMBER                                    {constAssign(varname, $4);}                                   
                         | ARRAY IDENTIFIER EQ  '[' ConstArray ']'                               
-                        | ConstAssignmentList ',' IDENTIFIER EQ NUMBER          {constAssign($3, $5);}                        
+                        | ConstAssignmentList ',' IDENTIFIER {varname = string($3);} EQ NUMBER          {constAssign(varname, $6);}                        
                         | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']'        
                         ;
 
