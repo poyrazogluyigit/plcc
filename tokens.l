@@ -30,8 +30,14 @@ extern int yychar;
 "writeline"         {return WRITELINE;}
 
 
-[a-zA-Z][a-zA-Z0-9]* {return IDENTIFIER; } // identifier terminal
-[0-9]+ {yylval.dval = symlook(yytext) ; return NUMBER;} // Number terminal
+/*  
+    buradaki ilginç bir hata ise doğrudan yylval.dval = yytext yapmak yanlış olarak
+    sonraki 1-2 karakterin de yylval.dval içine dahil edilmesine sebep oluyor ve
+    bu fazlalık llvm koduna yansıyor. test etmek için aşağıdaki symlook() fonksiyonlarını
+    kaldırabilirsiniz.
+ */
+[a-zA-Z][a-zA-Z0-9]* {yylval.dval = symlook(yytext); return IDENTIFIER; } // identifier terminal
+[0-9]+ {yylval.dval = symlook(yytext) ; return NUMBER; } // Number terminal
 
 "=" {return EQ;}
 "<>" {return IDK;}
