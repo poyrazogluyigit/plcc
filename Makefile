@@ -33,7 +33,7 @@ debug: plcc
 
 # Clean up generated files
 clean:
-	rm -f plcc *.o y.tab.* lex.yy.c y.output
+	rm -f mypl *.o y.tab.* lex.yy.c y.output
 
 # Phony target to prevent conflicts with actual file names
 .PHONY: clean debug
