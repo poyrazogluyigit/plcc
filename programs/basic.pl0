@@ -4,3 +4,4 @@ begin
     writeline(y * z);
     writeline(x - z);
 end
+.
