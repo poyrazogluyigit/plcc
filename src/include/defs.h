@@ -4,10 +4,9 @@
 #include <fstream>
 #include "llvmcnv.h"
 #include "tables.h"
-#include <string>
 
-using namespace std;
+using namespace std ;
 
-extern int rhsflag;
+extern int rhsflag ;
 
 int yyparse();

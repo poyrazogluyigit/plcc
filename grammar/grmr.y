@@ -15,13 +15,8 @@ int error = 0;
         char* dval;
 }
 
-%union {
-        std::string sval;
-}
-
 %type <dval> Expression GeneralList Condition ConstAssignmentList 
 %type <dval> StatementList
-%type <sval> ConstArray
 
 
 // tokens
@@ -72,9 +67,9 @@ ConstDecl : CONST ConstAssignmentList ';'
 // aynı durum benzer bir uygulama yaptığım her kuralda geçerli.
 ConstAssignmentList : 
                         IDENTIFIER {varname = string($1);} EQ NUMBER                                    {constAssign(varname, $4);}                                   
-                        | ARRAY IDENTIFIER {varname = string($2);} EQ  '[' ConstArray ']'               {constArrayAssign(varname, $5);}                
+                        | ARRAY IDENTIFIER EQ  '[' ConstArray ']'                               
                         | ConstAssignmentList ',' IDENTIFIER {varname = string($3);} EQ NUMBER          {constAssign(varname, $6);}                        
-                        | ConstAssignmentList ',' ARRAY IDENTIFIER {varname = string($4);} EQ '[' ConstArray ']'      {constArrayAssign(varname, $7);}   
+                        | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']'        
                         ;
 
 VarDecl:
@@ -175,8 +170,8 @@ Condition :
             ;
 
 
-ConstArray: NUMBER {$$ = "i32 "+to_string($1)}
-            | ConstArray ',' NUMBER                     {$$ = constarray($1,$3)}
+ConstArray: NUMBER
+            | ConstArray ',' NUMBER
             | ConstArray error NUMBER               {yyerror("Invalid list construct"); yyerrok;}
             ;
 
