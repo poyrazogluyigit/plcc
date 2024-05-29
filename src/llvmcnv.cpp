@@ -1,21 +1,10 @@
-#include "defs.h"
+#include "llvmcnv.h"
 
-int lineno =  1 ; 
-int tmpno =  1 ; 
-vector<string> llvmcode ;
+vector<string> llvmcode;
 vector<string> constAssignments;  
-map<string,string> symtab ; 
-int rhsflag = 1 ; 
-string va ; 
+int rhsflag = 1; 
+int tmpno =  1;
 
-extern int error;
-
-int main(int argc, char *argv[])
-{
-    yyparse() ; 
-    gen_llvm_ir() ; 
-    return 0;
-}
 
 void gen_llvm_ir(){
    std::map<std::string, std::string >::iterator si ; 
@@ -154,36 +143,3 @@ void  assignment(string lhs,string rhs)
   stm = string("store i32 ") + rhs + string(", i32* %") + lhs ; 
   llvmcode.push_back(stm) ; 
 }
-
-int yyerror(string msg)
-{
-   std::cout << "Line: " << lineno << " " << msg << std::endl ;
-   error = 1;
-   exit(0) ;
-}
-
-// look up a symbol table entry, add if not present 
-// normally we store a struct here, but in this example 
-// we store the string for variable names, constants, temporary vars as 
-// string 
-char *symlook(char *cs)
-{    
-    string s = string(cs) ; 
-    symtab[s] = s ;
-    return((char *) symtab[s].c_str()) ; 
-} 
-
-bool is_tmp_or_integer(string & token) 
-{
-    bool isnumber ;
-
-    string::const_iterator k = token.begin(); 
-
-    isnumber = ( isdigit(*k)  || (*k == '%') ) ; 
-
-    k++ ; 
-    for( ; k != token.end(); k++) { 
-        isnumber = isnumber && isdigit(*k) ;
-    }
-    return(isnumber) ; 
-}    

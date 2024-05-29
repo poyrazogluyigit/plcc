@@ -1,5 +1,7 @@
 llvm_tests/
 old/
+build/
+src/generate/
 *.o
 *.yy.c
 y.tab.c
