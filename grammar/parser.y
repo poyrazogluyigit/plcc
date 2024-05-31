@@ -1,11 +1,8 @@
 %{
-#include <iostream>
-#include "ExprAST.hpp"
-#include "CondAST.hpp"
-#include "StmtAST.hpp"
+#include "header.hpp"
 
 extern FILE *yyin;
-void yyerror(char *s);
+void yyerror(std::string s);
 extern int yylineno;
 extern int yylex();
 // int yydebug = 1;
@@ -193,7 +190,7 @@ Expression  :   Expression PLUS Expression
 %%
 // User Subroutines
 
-void yyerror(string s) {
+void yyerror(std::string s) {
     std::cerr << "line " << yylineno << ": " << s << std::endl;
 }
 

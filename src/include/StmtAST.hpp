@@ -1,4 +1,5 @@
 #pragma once
+#include "header.hpp"
 
 class StmtAST {
     public:
@@ -10,7 +11,7 @@ class SingleAssignStmtAST : StmtAST {
     std::unique_ptr<ExprAST> RHS;
 
     public:
-        AssignStmtAST(const std::string &var, std::unique_ptr<ExprAST> RHS) : var(var), RHS(std::move(RHS)) {}
+        SingleAssignStmtAST(const std::string &var, std::unique_ptr<ExprAST> RHS) : var(var), RHS(std::move(RHS)) {}
 };
 
 class IndexedAssignStmtAST : StmtAST {
@@ -19,7 +20,7 @@ class IndexedAssignStmtAST : StmtAST {
     std::unique_ptr<ExprAST> RHS;
 
     public:
-        ArrayAssignStmtAST(const std::string &var, int index, std::unique_ptr<ExprAST> RHS) 
+        IndexedAssignStmtAST(const std::string &var, int index, std::unique_ptr<ExprAST> RHS) 
         : var(var), index(index), RHS(std::move(RHS)) {}
 };
 
@@ -43,7 +44,7 @@ class StmtListAST : StmtAST {
 
     public:
         StmtListAST(std::vector<std::unique_ptr<StmtAST>> stmts) : stmts(std::move(stmts)) {}
-        addToList(std::unique_ptr<StmtAST> stmt) {
+        void addToList(std::unique_ptr<StmtAST> stmt) {
             stmts.push_back(std::move(stmt));
         }
 };
@@ -54,7 +55,7 @@ class IfThenElseAST : StmtAST {
     std::unique_ptr<StmtAST> elseStmt;
 
     public:
-        ConditionalStmtAST(std::unique_ptr<CondAST> cond, std::unique_ptr<StmtAST> thenStmt, std::unique_ptr<StmtAST> elseStmt) 
+        IfThenElseAST(std::unique_ptr<CondAST> cond, std::unique_ptr<StmtAST> thenStmt, std::unique_ptr<StmtAST> elseStmt) 
         : cond(std::move(cond)), thenStmt(std::move(thenStmt)), elseStmt(std::move(elseStmt)) {}
 };
 
@@ -63,7 +64,7 @@ class IfThenAST : StmtAST {
     std::unique_ptr<StmtAST> thenStmt;
 
     public:
-        ConditionalStmtAST(std::unique_ptr<CondAST> cond, std::unique_ptr<StmtAST> thenStmt) 
+        IfThenAST(std::unique_ptr<CondAST> cond, std::unique_ptr<StmtAST> thenStmt) 
         : cond(std::move(cond)), thenStmt(std::move(thenStmt)) {}
 };
 
@@ -93,5 +94,5 @@ class IOStmtAST : StmtAST {
     std::unique_ptr<ExprAST> expr;
 
     public:
-        IOStmtAST(const std::string &op, std::unique_ptr<ExprAST> expr) : op(op), expr(std::move(expr)) {}
+        IOStmtAST(int op, std::unique_ptr<ExprAST> expr) : op(op), expr(std::move(expr)) {}
 };

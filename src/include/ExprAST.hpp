@@ -1,4 +1,5 @@
 #pragma once
+#include "header.hpp"
 
 // ExprAST - Base AST class for all expression nodes
 class ExprAST {
@@ -57,7 +58,7 @@ class ListExprAST : ExprAST {
 
     public:
         ListExprAST(std::vector<std::unique_ptr<ExprAST>> exprs) : exprs(std::move(exprs)) {}
-        addToList(std::unique_ptr<ExprAST> expr) {
+        void addToList(std::unique_ptr<ExprAST> expr) {
             exprs.push_back(std::move(expr));
         }
 };
