@@ -7,3 +7,4 @@
 #include "ExprAST.hpp"
 #include "CondAST.hpp"
 #include "StmtAST.hpp"
+#include "DeclAST.hpp"

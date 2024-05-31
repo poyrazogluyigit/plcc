@@ -92,6 +92,7 @@ ConstArray: NUMBER
             | ConstArray error NUMBER               {yyerror("Invalid list construct"); yyerrok;}
             ;
 
+// -------------- yazildi ----------------
 
 Statement : 
             IDENTIFIER ASGN Expression 
@@ -182,7 +183,7 @@ Expression  :   Expression PLUS Expression
                 | MINUS Expression    %prec UMINUS
                 | IDENTIFIER
                 | IDENTIFIER '[' NUMBER ']'
-                | NUMBER
+                | NUMBER {$$ = NumberExprAST($1)}
                 | '(' Expression ')'
                 | FuncCall
                 ;

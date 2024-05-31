@@ -96,3 +96,18 @@ class IOStmtAST : StmtAST {
     public:
         IOStmtAST(int op, std::unique_ptr<ExprAST> expr) : op(op), expr(std::move(expr)) {}
 };
+
+class NoValControlAST : StmtAST {
+    int type;
+    
+    public:
+        NoValControlAST(int type) : type(type) {} 
+};
+
+class ReturnValueControlAST : StmtAST {
+    int type;
+    std::unique_ptr<ExprAST> ret;
+
+    public:
+        ReturnValueControlAST(int type, std::unique_ptr<ExprAST> ret) : type(type), ret(std::move(ret)) {}
+};

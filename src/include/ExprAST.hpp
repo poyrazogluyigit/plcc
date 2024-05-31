@@ -12,7 +12,7 @@ class FuncCallAST : ExprAST {
     std::vector<std::unique_ptr<ExprAST>> args;
 
     public:
-        FuncCallAST(const std::string &name, std::vector<std::unique_ptr<ExprAST>> args) : name(name) {}
+        FuncCallAST(const std::string &name, std::vector<std::unique_ptr<ExprAST>> args) : name(name) args(std::move(args)) {}
 };
 
 

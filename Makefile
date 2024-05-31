@@ -13,7 +13,7 @@ INC_DIR = $(SRC_DIR)/include
 DEBUG_FLAGS = --debug --verbose -k # -Wcounterexamples --report all
 
 # Compiler flags
-CFLAGS = -DYYDEBUG=1 -I $(INC_DIR) -std=c++11
+CFLAGS = -I $(INC_DIR) -std=c++11 # -DYYDEBUG=1
 
 # Target for the plcc executable
 plcc: $(BUILD_DIR)/parser.o $(BUILD_DIR)/lex.yy.o
