@@ -1,6 +1,6 @@
 %{
 #include "header.hpp"
-
+BlockAST *block;
 extern FILE *yyin;
 void yyerror(std::string s);
 extern int yylineno;
@@ -14,6 +14,8 @@ extern int yylex();
     ExprAST *expr;
     CondAST *cond;
     StmtAST *stmt;
+    DeclAST *decl;
+    ConstDeclAST *constDecl;
 }
 
 // tokens
@@ -27,8 +29,8 @@ extern int yylex();
 %type <cond> Condition
 %type <expr> Expression GeneralList FuncCall
 %type <stmt> Statement StatementList ConditionalStatement LoopStatement ControlStatement IOStatement
-
-
+%type <decl> Block
+%type <constDecl> ConstDecl ConstAssignmentList
 
 %nonassoc IFX
 %nonassoc ELSE
@@ -41,20 +43,22 @@ extern int yylex();
 
 %%
 // Rules
-Program : Block '.' ;    // '>''='   
+Program : Block '.' {block = $1};    // '>''='   
 
-Block : ConstDecl VarDecl ArrayDecl ProcDecl FuncDecl Statement ;
+Block : ConstDecl VarDecl ArrayDecl ProcDecl FuncDecl Statement { $$ = new BlockAST($1, $2, $3, $4, $5, $6); }
+        | error '.' {yyerror("Invalid block construct"); yyerrok;}
+        ;
 
-ConstDecl : CONST ConstAssignmentList ';' 
+ConstDecl : CONST ConstAssignmentList ';' {$$ = $2; }
             |
             | error ';'                          {yyerror("Invalid const declaration"); yyerrok;}
             ;  
 
 ConstAssignmentList : 
-                        IDENTIFIER EQ NUMBER
-                        | ARRAY IDENTIFIER EQ  '[' ConstArray ']'
-                        | ConstAssignmentList ',' IDENTIFIER EQ NUMBER
-                        | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']'
+                        IDENTIFIER EQ NUMBER {$$ = new ConstVarDecl(new ConstVarAST($1, $3),0);}
+                        | ARRAY IDENTIFIER EQ  '[' ConstArray ']' {$$ = new ConstVarDecl(0,new ConstArrayAST($2, $5));}
+                        | ConstAssignmentList ',' IDENTIFIER EQ NUMBER {$$ = new constDecl($1.getVars()->pushback(ConstVarAST($3, $5)),$1.getArray());}
+                        | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']' {$$ = new constDecl($1.getVars(),$1.getArray()->pushback(ConstArrayAST($4, $6)));}
                         ;
 
 VarDecl:
