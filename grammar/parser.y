@@ -1,38 +1,46 @@
 %{
-#include <stdio.h>
-#include "src/include/ExprAST.hpp"
+#include <iostream>
+#include "ExprAST.hpp"
+#include "CondAST.hpp"
+#include "StmtAST.hpp"
+
+extern FILE *yyin;
 void yyerror(char *s);
-extern FILE * yyin;
 extern int yylineno;
 extern int yylex();
 // int yydebug = 1;
 %}
 
+%union{
+    int token;
+    std::string *string;
+    ExprAST *expr;
+    CondAST *cond;
+    StmtAST *stmt;
+}
+
 // tokens
-%token NUMBER IDENTIFIER
-%token CONST 
-%token VAR
-%token ARRAY
-%token PROCEDURE
-%token FUNCTION
-%token CALL 
-%token BEGN END
-%token IF THEN ELSE
-%token WHILE
-%token DO
-%token FOR
-%token UPTO DOWNTO
-%token BREAK
-%token RETURN
-%token READ WRITE WRITELINE
-%token ODD EQ IDK GT LT GEQ LEQ ASGN
+%token <string> NUMBER IDENTIFIER
+%token <token> CONST VAR ARRAY PROCEDURE FUNCTION CALL BEGN END
+%token <token> IF THEN ELSE WHILE DO FOR UPTO DOWNTO BREAK RETURN
+%token <token> READ WRITE WRITELINE
+%token <token> ODD EQ NE GT LT GEQ LEQ ASGN
+%token <token> PLUS MINUS MUL DIV MOD
+
+%type <cond> Condition
+%type <expr> Expression GeneralList FuncCall
+%type <stmt> Statement StatementList ConditionalStatement LoopStatement ControlStatement IOStatement
+
+
 
 %nonassoc IFX
 %nonassoc ELSE
 
-%left '+' '-'
-%left '*' '/' '%'
+%left PLUS MINUS
+%left MUL DIV MOD
 %nonassoc UMINUS UPLUS
+
+%start Program
 
 %%
 // Rules
@@ -80,7 +88,12 @@ FuncDecl:
             FUNCTION IDENTIFIER '(' IdentifierList ')' ';' Block ';' 
             | error ';'                             {yyerror("Invalid function declaration"); yyerrok;} 
             |    
-;           
+;    
+
+ConstArray: NUMBER
+            | ConstArray ',' NUMBER
+            | ConstArray error NUMBER               {yyerror("Invalid list construct"); yyerrok;}
+            ;
 
 
 Statement : 
@@ -143,18 +156,12 @@ StatementList:
 Condition :
             ODD Expression 
             | Expression EQ Expression
-            | Expression IDK Expression
+            | Expression NE Expression
             | Expression GT Expression
             | Expression LT Expression
             | Expression LEQ Expression
             | Expression GEQ Expression
             | Expression ASGN Expression
-            ;
-
-
-ConstArray: NUMBER
-            | ConstArray ',' NUMBER
-            | ConstArray error NUMBER               {yyerror("Invalid list construct"); yyerrok;}
             ;
 
 
@@ -169,13 +176,13 @@ GeneralList:    NUMBER
 
 
 
-Expression  :   Expression '+' Expression
-                | Expression '-' Expression
-                | Expression '*' Expression
-                | Expression '/' Expression
-                | Expression '%' Expression
-                | '+' Expression    %prec UPLUS
-                | '-' Expression    %prec UMINUS
+Expression  :   Expression PLUS Expression
+                | Expression MINUS Expression
+                | Expression MUL Expression
+                | Expression DIV Expression
+                | Expression MOD Expression
+                | PLUS Expression    %prec UPLUS
+                | MINUS Expression    %prec UMINUS
                 | IDENTIFIER
                 | IDENTIFIER '[' NUMBER ']'
                 | NUMBER
@@ -186,8 +193,8 @@ Expression  :   Expression '+' Expression
 %%
 // User Subroutines
 
-void yyerror(char *s) {
-    fprintf(stderr, "line %d: %s\n", yylineno, s);
+void yyerror(string s) {
+    std::cerr << "line " << yylineno << ": " << s << std::endl;
 }
 
 

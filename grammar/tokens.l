@@ -1,49 +1,55 @@
 %{
-#include <string.h>
-#include "y.tab.h"
-extern int yylex();
-extern int yychar;
+#include <string>
+#include "parser.hpp"
+#define SAVE_TOKEN yylval.string = new std::string(yytext, yyleng)
+#define TOKEN(t) (yylval.token = t)
+extern "C" int yywrap() { }
 %}
 %%
 
-"const"             {return CONST;}
-"var"               {return VAR;}
-"array"             {return ARRAY;}
-"procedure"         {return PROCEDURE;}
-"function"          {return FUNCTION;}
-"call"              {return CALL;} 
-"begin"             {return BEGN;}
-"end"               {return END;}
-"if"                {return IF;}
-"then"              {return THEN;}
-"else"              {return ELSE;}
-"while"             {return WHILE;}
-"do"                {return DO;}
-"for"               {return FOR;}
-"up to"             {return UPTO;}
-"down to"           {return DOWNTO;}
-"break"             {return BREAK;}
-"return"            {return RETURN;}
-"odd"               {return ODD;}
-"read"              {return READ;}
-"write"             {return WRITE;}
-"writeline"         {return WRITELINE;}
+"const"             {return TOKEN(CONST);}
+"var"               {return TOKEN(VAR);}
+"array"             {return TOKEN(ARRAY);}
+"procedure"         {return TOKEN(PROCEDURE);}
+"function"          {return TOKEN(FUNCTION);}
+"call"              {return TOKEN(CALL);} 
+"begin"             {return TOKEN(BEGN);}
+"end"               {return TOKEN(END);}
+"if"                {return TOKEN(IF);}
+"then"              {return TOKEN(THEN);}
+"else"              {return TOKEN(ELSE);}
+"while"             {return TOKEN(WHILE);}
+"do"                {return TOKEN(DO);}
+"for"               {return TOKEN(FOR);}
+"up to"             {return TOKEN(UPTO);}
+"down to"           {return TOKEN(DOWNTO);}
+"break"             {return TOKEN(BREAK);}
+"return"            {return TOKEN(RETURN);}
+"odd"               {return TOKEN(ODD);}
+"read"              {return TOKEN(READ);}
+"write"             {return TOKEN(WRITE);}
+"writeline"         {return TOKEN(WRITELINE);}
 
 
-[a-zA-Z][a-zA-Z0-9]* {return IDENTIFIER; } // identifier terminal
-[0-9]+ {return NUMBER;} // Number terminal
+[a-zA-Z][a-zA-Z0-9]* {SAVE_TOKEN; return TOKEN(IDENTIFIER); } // identifier terminal
+[0-9]+ {SAVE_TOKEN; return TOKEN(NUMBER);} // Number terminal
 
-"=" {return EQ;}
-"<>" {return IDK;}
-">" {return GT;}
-"<" {return LT;}
-"<=" {return LEQ;}
-">=" {return GEQ;}
-":=" {return ASGN;}
+"=" {return TOKEN(EQ);}
+"<>" {return TOKEN(NE);}
+">" {return TOKEN(GT);}
+"<" {return TOKEN(LT);}
+"<=" {return TOKEN(LEQ);}
+">=" {return TOKEN(GEQ);}
+":=" {return TOKEN(ASGN);}
+"-" {return TOKEN(MINUS);}
+"+" {return TOKEN(PLUS);}
+"*" {return TOKEN(MUL);}
+"/" {return TOKEN(DIV);}
+"%" {return TOKEN(MOD);}
 
 [ \t]+   ;
 [\n]        {yylineno++;} 
-. {return yytext[0];} 
+. {return yytext[0];}
 
 
 %%

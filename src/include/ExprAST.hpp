@@ -1,6 +1,19 @@
 #pragma once
 
+// ExprAST - Base AST class for all expression nodes
+class ExprAST {
+    public:
+        virtual ~ExprAST() = default;
 };
+
+class FuncCallAST : ExprAST {
+    std::string name;
+    std::vector<std::unique_ptr<ExprAST>> args;
+
+    public:
+        FuncCallAST(const std::string &name, std::vector<std::unique_ptr<ExprAST>> args) : name(name) {}
+};
+
 
 // BinaryExprAST - Binary Expression AST Node class
 class BinaryExprAST : ExprAST {
@@ -37,4 +50,14 @@ class NumberExprAST : ExprAST {
 
     public:
         NumberExprAST(int val) : val(val) {}
+};
+
+class ListExprAST : ExprAST {
+    std::vector<std::unique_ptr<ExprAST>> exprs;
+
+    public:
+        ListExprAST(std::vector<std::unique_ptr<ExprAST>> exprs) : exprs(std::move(exprs)) {}
+        addToList(std::unique_ptr<ExprAST> expr) {
+            exprs.push_back(std::move(expr));
+        }
 };
