@@ -1,6 +1,6 @@
-#line 1 "lex.yy.c"
+#line 1 "./src/generate/lex.yy.c"
 
-#line 3 "lex.yy.c"
+#line 3 "./src/generate/lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -509,14 +509,14 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "tokens.l"
-#line 2 "tokens.l"
+#line 1 "./grammar/tokens.l"
+#line 2 "./grammar/tokens.l"
 #include <string.h>
 #include "y.tab.h"
 extern int yylex();
 extern int yychar;
-#line 518 "lex.yy.c"
-#line 519 "lex.yy.c"
+#line 518 "./src/generate/lex.yy.c"
+#line 519 "./src/generate/lex.yy.c"
 
 #define INITIAL 0
 
@@ -733,10 +733,10 @@ YY_DECL
 		}
 
 	{
-#line 7 "tokens.l"
+#line 7 "./grammar/tokens.l"
 
 
-#line 739 "lex.yy.c"
+#line 739 "./src/generate/lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -795,181 +795,181 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 9 "tokens.l"
+#line 9 "./grammar/tokens.l"
 {return CONST;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 10 "tokens.l"
+#line 10 "./grammar/tokens.l"
 {return VAR;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 11 "tokens.l"
+#line 11 "./grammar/tokens.l"
 {return ARRAY;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 12 "tokens.l"
+#line 12 "./grammar/tokens.l"
 {return PROCEDURE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 13 "tokens.l"
+#line 13 "./grammar/tokens.l"
 {return FUNCTION;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 14 "tokens.l"
+#line 14 "./grammar/tokens.l"
 {return CALL;} 
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 15 "tokens.l"
+#line 15 "./grammar/tokens.l"
 {return BEGN;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 16 "tokens.l"
+#line 16 "./grammar/tokens.l"
 {return END;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 17 "tokens.l"
+#line 17 "./grammar/tokens.l"
 {return IF;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 18 "tokens.l"
+#line 18 "./grammar/tokens.l"
 {return THEN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 19 "tokens.l"
+#line 19 "./grammar/tokens.l"
 {return ELSE;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 20 "tokens.l"
+#line 20 "./grammar/tokens.l"
 {return WHILE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 21 "tokens.l"
+#line 21 "./grammar/tokens.l"
 {return DO;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 22 "tokens.l"
+#line 22 "./grammar/tokens.l"
 {return FOR;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 23 "tokens.l"
+#line 23 "./grammar/tokens.l"
 {return UPTO;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 24 "tokens.l"
+#line 24 "./grammar/tokens.l"
 {return DOWNTO;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 25 "tokens.l"
+#line 25 "./grammar/tokens.l"
 {return BREAK;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 26 "tokens.l"
+#line 26 "./grammar/tokens.l"
 {return RETURN;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 27 "tokens.l"
+#line 27 "./grammar/tokens.l"
 {return ODD;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 28 "tokens.l"
+#line 28 "./grammar/tokens.l"
 {return READ;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 29 "tokens.l"
+#line 29 "./grammar/tokens.l"
 {return WRITE;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 30 "tokens.l"
+#line 30 "./grammar/tokens.l"
 {return WRITELINE;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 33 "tokens.l"
+#line 33 "./grammar/tokens.l"
 {return IDENTIFIER; } // identifier terminal
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 34 "tokens.l"
+#line 34 "./grammar/tokens.l"
 {return NUMBER;} // Number terminal
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 36 "tokens.l"
+#line 36 "./grammar/tokens.l"
 {return EQ;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 37 "tokens.l"
+#line 37 "./grammar/tokens.l"
 {return IDK;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 38 "tokens.l"
+#line 38 "./grammar/tokens.l"
 {return GT;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 39 "tokens.l"
+#line 39 "./grammar/tokens.l"
 {return LT;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 40 "tokens.l"
+#line 40 "./grammar/tokens.l"
 {return LEQ;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 41 "tokens.l"
+#line 41 "./grammar/tokens.l"
 {return GEQ;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 42 "tokens.l"
+#line 42 "./grammar/tokens.l"
 {return ASGN;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 44 "tokens.l"
+#line 44 "./grammar/tokens.l"
 ;
 	YY_BREAK
 case 33:
 /* rule 33 can match eol */
 YY_RULE_SETUP
-#line 45 "tokens.l"
+#line 45 "./grammar/tokens.l"
 {yylineno++;} 
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 46 "tokens.l"
+#line 46 "./grammar/tokens.l"
 {return yytext[0];} 
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 49 "tokens.l"
+#line 49 "./grammar/tokens.l"
 ECHO;
 	YY_BREAK
-#line 972 "lex.yy.c"
+#line 972 "./src/generate/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1974,6 +1974,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 49 "tokens.l"
+#line 49 "./grammar/tokens.l"
 
 

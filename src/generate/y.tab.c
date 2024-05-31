@@ -142,7 +142,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "grmr.y"
+#line 1 "./grammar/grmr.y"
 
 #include <stdio.h>
 void yyerror(char *s);
@@ -183,7 +183,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 187 "y.tab.c"
+#line 187 "./src/generate/y.tab.c"
 
 #ifdef short
 # undef short
@@ -1586,93 +1586,93 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 44 "grmr.y"
+#line 44 "./grammar/grmr.y"
     {yyerror("Invalid const declaration"); yyerrok;}
     break;
 
   case 13:
-#line 57 "grmr.y"
+#line 57 "./grammar/grmr.y"
     {yyerror("Invalid variable declaration"); yyerrok;}
     break;
 
   case 15:
-#line 62 "grmr.y"
+#line 62 "./grammar/grmr.y"
     {yyerror("Invalid array declaration"); yyerrok;}
     break;
 
   case 21:
-#line 74 "grmr.y"
+#line 74 "./grammar/grmr.y"
     {yyerror("Invalid procedure declaration"); yyerrok;}
     break;
 
   case 24:
-#line 80 "grmr.y"
+#line 80 "./grammar/grmr.y"
     {yyerror("Invalid function declaration"); yyerrok;}
     break;
 
   case 37:
-#line 97 "grmr.y"
+#line 97 "./grammar/grmr.y"
     {yyerror("Invalid statement"); yyerrok;}
     break;
 
   case 38:
-#line 98 "grmr.y"
+#line 98 "./grammar/grmr.y"
     {yyerror("Invalid statement"); yyerrok;}
     break;
 
   case 39:
-#line 99 "grmr.y"
+#line 99 "./grammar/grmr.y"
     {yyerror("Invalid statement");}
     break;
 
   case 45:
-#line 113 "grmr.y"
+#line 113 "./grammar/grmr.y"
     {yyerror("Invalid while construct"); yyclearin;}
     break;
 
   case 47:
-#line 114 "grmr.y"
+#line 114 "./grammar/grmr.y"
     {yyerror("Invalid for construct"); yyclearin;}
     break;
 
   case 52:
-#line 121 "grmr.y"
+#line 121 "./grammar/grmr.y"
     {yyerror("Invalid read() call"); yyerrok;}
     break;
 
   case 53:
-#line 122 "grmr.y"
+#line 122 "./grammar/grmr.y"
     {yyerror("Invalid write() call"); yyerrok;}
     break;
 
   case 54:
-#line 123 "grmr.y"
+#line 123 "./grammar/grmr.y"
     {yyerror("Invalid writeline() call"); yyerrok;}
     break;
 
   case 61:
-#line 139 "grmr.y"
+#line 139 "./grammar/grmr.y"
     {yyerror("Missing semicolon"); yyerrok;}
     break;
 
   case 73:
-#line 156 "grmr.y"
+#line 156 "./grammar/grmr.y"
     {yyerror("Invalid list construct"); yyerrok;}
     break;
 
   case 78:
-#line 164 "grmr.y"
+#line 164 "./grammar/grmr.y"
     {yyerror("Invalid list construct"); yyerrok;}
     break;
 
   case 79:
-#line 165 "grmr.y"
+#line 165 "./grammar/grmr.y"
     {yyerror("Invalid list construct"); yyerrok;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1676 "y.tab.c"
+#line 1676 "./src/generate/y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1886,7 +1886,7 @@ yyreturn:
 }
 
 
-#line 185 "grmr.y"
+#line 185 "./grammar/grmr.y"
 
 // User Subroutines
 
