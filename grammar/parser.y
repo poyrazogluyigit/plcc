@@ -5,6 +5,8 @@ extern FILE *yyin;
 void yyerror(std::string s);
 extern int yylineno;
 extern int yylex();
+std::vector<ConstVarAST*> constVars;
+std::vector<ConstArrayAST*> constArrays;
 // int yydebug = 1;
 %}
 
@@ -29,8 +31,8 @@ extern int yylex();
 %type <cond> Condition
 %type <expr> Expression GeneralList FuncCall
 %type <stmt> Statement StatementList ConditionalStatement LoopStatement ControlStatement IOStatement
-%type <decl> Block
-%type <constDecl> ConstDecl ConstAssignmentList
+%type <decl> Block VarDecl ArrayDecl ProcDecl FuncDecl
+%type <constDecl> ConstDecl
 
 %nonassoc IFX
 %nonassoc ELSE
@@ -49,16 +51,16 @@ Block : ConstDecl VarDecl ArrayDecl ProcDecl FuncDecl Statement { $$ = new Block
         | error '.' {yyerror("Invalid block construct"); yyerrok;}
         ;
 
-ConstDecl : CONST ConstAssignmentList ';' {$$ = $2; }
+ConstDecl : CONST {constVars.clear(); constArrays.clear();} ConstAssignmentList ';' { $$ = new ConstDeclAST(constVars, constArrays); }
             |
             | error ';'                          {yyerror("Invalid const declaration"); yyerrok;}
             ;  
 
 ConstAssignmentList : 
-                        IDENTIFIER EQ NUMBER {$$ = new ConstVarDecl(new ConstVarAST($1, $3),0);}
-                        | ARRAY IDENTIFIER EQ  '[' ConstArray ']' {$$ = new ConstVarDecl(0,new ConstArrayAST($2, $5));}
-                        | ConstAssignmentList ',' IDENTIFIER EQ NUMBER {$$ = new constDecl($1.getVars()->pushback(ConstVarAST($3, $5)),$1.getArray());}
-                        | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']' {$$ = new constDecl($1.getVars(),$1.getArray()->pushback(ConstArrayAST($4, $6)));}
+                        IDENTIFIER EQ NUMBER {constVars.push_back(new ConstVarAST($1, $3));}
+                        | ARRAY IDENTIFIER EQ  '[' ConstArray ']' {constArrays.push_back(new ConstArrayAST($2, $5));}
+                        | ConstAssignmentList ',' IDENTIFIER EQ NUMBER {constVars.push_back(new ConstVarAST($3, $5));}
+                        | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']' {constArrays.push_back(new ConstArrayAST($4, $7));}
                         ;
 
 VarDecl:
@@ -141,7 +143,7 @@ IOStatement:
 
 
 FuncCall:   
-        CALL IDENTIFIER '(' GeneralList ')' 
+        CALL IDENTIFIER '(' GeneralList ')'                     { $$ = new FuncCallAST($2, $4);}
         ;
 
 
@@ -178,18 +180,18 @@ GeneralList:    NUMBER
 
 
 
-Expression  :   Expression PLUS Expression
-                | Expression MINUS Expression
-                | Expression MUL Expression
-                | Expression DIV Expression
-                | Expression MOD Expression
-                | PLUS Expression    %prec UPLUS
-                | MINUS Expression    %prec UMINUS
-                | IDENTIFIER
+Expression  :   Expression PLUS Expression                  { $$ = new BinaryExprAST('+', $1, $3); }
+                | Expression MINUS Expression               { $$ = new BinaryExprAST('-', $1, $3); }
+                | Expression MUL Expression                 { $$ = new BinaryExprAST('*', $1, $3); }
+                | Expression DIV Expression                 { $$ = new BinaryExprAST('/', $1, $3); }
+                | Expression MOD Expression                 { $$ = new BinaryExprAST('%', $1, $3); }
+                | PLUS Expression    %prec UPLUS            { $$ = new UnaryExprAST('+', $2); }
+                | MINUS Expression    %prec UMINUS          { $$ = new UnaryExprAST('-', $2); }
+                | IDENTIFIER                                { $$ = VariableExprAST($1); }
                 | IDENTIFIER '[' NUMBER ']'
-                | NUMBER {$$ = NumberExprAST($1)}
-                | '(' Expression ')'
-                | FuncCall
+                | NUMBER                                    {$$ = NumberExprAST($1)}
+                | '(' Expression ')'                        { $$ = $2; }
+                | FuncCall                                  
                 ;
 
 %%
