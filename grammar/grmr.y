@@ -1,5 +1,6 @@
 %{
 #include <stdio.h>
+#include "src/include/ExprAST.hpp"
 void yyerror(char *s);
 extern FILE * yyin;
 extern int yylineno;

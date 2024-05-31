@@ -145,6 +145,7 @@
 #line 1 "./grammar/grmr.y"
 
 #include <stdio.h>
+#include "src/include/ExprAST.hpp"
 void yyerror(char *s);
 extern FILE * yyin;
 extern int yylineno;
@@ -183,7 +184,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 187 "./src/generate/y.tab.c"
+#line 188 "./src/generate/y.tab.c"
 
 #ifdef short
 # undef short
@@ -510,16 +511,16 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    38,    38,    40,    42,    43,    44,    48,    49,    50,
-      51,    55,    56,    57,    61,    62,    63,    67,    68,    69,
-      73,    74,    75,    79,    80,    81,    86,    87,    88,    89,
-      90,    91,    92,    93,    94,    95,    96,    97,    98,    99,
-     106,   107,   110,   111,   112,   113,   113,   114,   114,   118,
-     119,   120,   121,   122,   123,   128,   134,   134,   134,   137,
-     138,   139,   139,   143,   144,   145,   146,   147,   148,   149,
-     150,   154,   155,   156,   160,   161,   162,   163,   164,   165,
-     166,   171,   172,   173,   174,   175,   176,   177,   178,   179,
-     180,   181,   182
+       0,    39,    39,    41,    43,    44,    45,    49,    50,    51,
+      52,    56,    57,    58,    62,    63,    64,    68,    69,    70,
+      74,    75,    76,    80,    81,    82,    87,    88,    89,    90,
+      91,    92,    93,    94,    95,    96,    97,    98,    99,   100,
+     107,   108,   111,   112,   113,   114,   114,   115,   115,   119,
+     120,   121,   122,   123,   124,   129,   135,   135,   135,   138,
+     139,   140,   140,   144,   145,   146,   147,   148,   149,   150,
+     151,   155,   156,   157,   161,   162,   163,   164,   165,   166,
+     167,   172,   173,   174,   175,   176,   177,   178,   179,   180,
+     181,   182,   183
 };
 #endif
 
@@ -1586,93 +1587,93 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 44 "./grammar/grmr.y"
+#line 45 "./grammar/grmr.y"
     {yyerror("Invalid const declaration"); yyerrok;}
     break;
 
   case 13:
-#line 57 "./grammar/grmr.y"
+#line 58 "./grammar/grmr.y"
     {yyerror("Invalid variable declaration"); yyerrok;}
     break;
 
   case 15:
-#line 62 "./grammar/grmr.y"
+#line 63 "./grammar/grmr.y"
     {yyerror("Invalid array declaration"); yyerrok;}
     break;
 
   case 21:
-#line 74 "./grammar/grmr.y"
+#line 75 "./grammar/grmr.y"
     {yyerror("Invalid procedure declaration"); yyerrok;}
     break;
 
   case 24:
-#line 80 "./grammar/grmr.y"
+#line 81 "./grammar/grmr.y"
     {yyerror("Invalid function declaration"); yyerrok;}
     break;
 
   case 37:
-#line 97 "./grammar/grmr.y"
-    {yyerror("Invalid statement"); yyerrok;}
-    break;
-
-  case 38:
 #line 98 "./grammar/grmr.y"
     {yyerror("Invalid statement"); yyerrok;}
     break;
 
-  case 39:
+  case 38:
 #line 99 "./grammar/grmr.y"
+    {yyerror("Invalid statement"); yyerrok;}
+    break;
+
+  case 39:
+#line 100 "./grammar/grmr.y"
     {yyerror("Invalid statement");}
     break;
 
   case 45:
-#line 113 "./grammar/grmr.y"
+#line 114 "./grammar/grmr.y"
     {yyerror("Invalid while construct"); yyclearin;}
     break;
 
   case 47:
-#line 114 "./grammar/grmr.y"
+#line 115 "./grammar/grmr.y"
     {yyerror("Invalid for construct"); yyclearin;}
     break;
 
   case 52:
-#line 121 "./grammar/grmr.y"
+#line 122 "./grammar/grmr.y"
     {yyerror("Invalid read() call"); yyerrok;}
     break;
 
   case 53:
-#line 122 "./grammar/grmr.y"
+#line 123 "./grammar/grmr.y"
     {yyerror("Invalid write() call"); yyerrok;}
     break;
 
   case 54:
-#line 123 "./grammar/grmr.y"
+#line 124 "./grammar/grmr.y"
     {yyerror("Invalid writeline() call"); yyerrok;}
     break;
 
   case 61:
-#line 139 "./grammar/grmr.y"
+#line 140 "./grammar/grmr.y"
     {yyerror("Missing semicolon"); yyerrok;}
     break;
 
   case 73:
-#line 156 "./grammar/grmr.y"
+#line 157 "./grammar/grmr.y"
     {yyerror("Invalid list construct"); yyerrok;}
     break;
 
   case 78:
-#line 164 "./grammar/grmr.y"
+#line 165 "./grammar/grmr.y"
     {yyerror("Invalid list construct"); yyerrok;}
     break;
 
   case 79:
-#line 165 "./grammar/grmr.y"
+#line 166 "./grammar/grmr.y"
     {yyerror("Invalid list construct"); yyerrok;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1676 "./src/generate/y.tab.c"
+#line 1677 "./src/generate/y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1886,7 +1887,7 @@ yyreturn:
 }
 
 
-#line 185 "./grammar/grmr.y"
+#line 186 "./grammar/grmr.y"
 
 // User Subroutines
 
