@@ -5,6 +5,7 @@ class DeclAST
 {
 public:
     virtual ~DeclAST() = default;
+    virtual Value *codegen() = 0;
 };
 
 class ConstVarAST : public DeclAST
@@ -13,70 +14,85 @@ class ConstVarAST : public DeclAST
     int value;
 
 public:
+    Value *codegen() override;
     ConstVarAST(std::string &variable, std::string &value) : variable(variable), value(std::stoi(value)) {}
 };
 
-class ConstArrayValuesAST : public DeclAST {
+class ConstArrayValuesAST : public DeclAST
+{
     std::vector<std::string> values;
 
-    public:
-        ConstArrayValuesAST(std::vector<std::string> values) : values(std::move(values)) {}
-        void addToList(std::string value) {
-            values.push_back(value);
-        }
+public:
+    Value *codegen() override;
+    ConstArrayValuesAST(std::vector<std::string> values) : values(std::move(values)) {}
+    void addToList(std::string value)
+    {
+        values.push_back(value);
+    }
 };
 
 class ConstArrayAST : public DeclAST
 {
     std::string var;
-    ConstArrayValuesAST* values;
+    ConstArrayValuesAST *values;
 
-    public:
-        ConstArrayAST(std::string &var, ConstArrayValuesAST* values) : var(var), values(values) {}
+public:
+    Value *codegen() override;
+    ConstArrayAST(std::string &var, ConstArrayValuesAST *values) : var(var), values(values) {}
 };
 
 class ConstDeclAST : public DeclAST
 {
-    std::vector<ConstVarAST*> vars;
-    std::vector<ConstArrayAST*> arrays;
+    std::vector<ConstVarAST *> vars;
+    std::vector<ConstArrayAST *> arrays;
 
 public:
-    ConstDeclAST(std::vector<ConstVarAST*> vars, std::vector<ConstArrayAST*> arrays)
+    Value *codegen() override;
+    ConstDeclAST(std::vector<ConstVarAST *> vars, std::vector<ConstArrayAST *> arrays)
         : vars(vars), arrays(arrays) {}
-    void addVar(ConstVarAST* var) {
+    void addVar(ConstVarAST *var)
+    {
         vars.push_back(var);
     }
-    void addArray(ConstArrayAST* array) {
+    void addArray(ConstArrayAST *array)
+    {
         arrays.push_back(array);
     }
 };
 
-class IdentListAST : public DeclAST {
+class IdentListAST : public DeclAST
+{
     std::vector<std::string> identifiers;
 
-    public:
-        IdentListAST(std::vector<std::string> identifiers) : identifiers(std::move(identifiers)) {}
-        void addToList(std::string identifier) {
-            identifiers.push_back(identifier);
-        }
-        std::vector<std::string> getIdentifiers() {
-            return identifiers;
-        }
+public:
+    Value *codegen() override;
+    IdentListAST(std::vector<std::string> identifiers) : identifiers(std::move(identifiers)) {}
+    void addToList(std::string identifier)
+    {
+        identifiers.push_back(identifier);
+    }
+    std::vector<std::string> getIdentifiers()
+    {
+        return identifiers;
+    }
 };
 
 class VarDeclAST : public DeclAST
 {
-    IdentListAST* identifiers;
+    IdentListAST *identifiers;
 
-    public:
-        VarDeclAST(IdentListAST* identifiers) : identifiers(identifiers) {}
+public:
+    Value *codegen() override;
+    VarDeclAST(IdentListAST *identifiers) : identifiers(identifiers) {}
 };
 
-class ArrayDeclAST : public DeclAST {
-    IdentListAST* arrays;
+class ArrayDeclAST : public DeclAST
+{
+    IdentListAST *arrays;
 
-    public:
-        ArrayDeclAST(IdentListAST* arrays) : arrays(arrays) {}
+public:
+    Value *codegen() override;
+    ArrayDeclAST(IdentListAST *arrays) : arrays(arrays) {}
 };
 
 class BlockAST;
@@ -84,51 +100,55 @@ class BlockAST;
 class ProcDeclAST : public DeclAST
 {
     std::string name;
-    BlockAST* body;
+    BlockAST *body;
 
 public:
-    ProcDeclAST(std::string &name, BlockAST* body) : name(name), body(body) {}
+    Value *codegen() override;
+    ProcDeclAST(std::string &name, BlockAST *body) : name(name), body(body) {}
 };
 
 class FuncDeclAST : public DeclAST
 {
     std::string name;
-    IdentListAST* identifiers;
-    BlockAST* body;
+    IdentListAST *identifiers;
+    BlockAST *body;
 
-    public:
-        FuncDeclAST(std::string &name, IdentListAST* identifiers, BlockAST* body)
-            : name(name), identifiers(identifiers), body(body) {}
+public:
+    Value *codegen() override;
+    FuncDeclAST(std::string &name, IdentListAST *identifiers, BlockAST *body)
+        : name(name), identifiers(identifiers), body(body) {}
 };
 
 class BlockAST : public DeclAST
 {
-    ConstDeclAST* ConstDecl;
-    VarDeclAST* VarDecl;
-    ArrayDeclAST* ArrayDecl;
-    ProcDeclAST* ProcDecl;
-    FuncDeclAST* FuncDecl;
-    StmtAST* Statement;
+    ConstDeclAST *ConstDecl;
+    VarDeclAST *VarDecl;
+    ArrayDeclAST *ArrayDecl;
+    ProcDeclAST *ProcDecl;
+    FuncDeclAST *FuncDecl;
+    StmtAST *Statement;
 
 public:
-    BlockAST(ConstDeclAST* constDecl,
-             VarDeclAST* varDecl,
-             ArrayDeclAST* ArrayDecl, 
-             ProcDeclAST* procDecl,
-             FuncDeclAST* funcDecl,
-             StmtAST* statement)
+    Value *codegen() override;
+    BlockAST(ConstDeclAST *constDecl,
+             VarDeclAST *varDecl,
+             ArrayDeclAST *ArrayDecl,
+             ProcDeclAST *procDecl,
+             FuncDeclAST *funcDecl,
+             StmtAST *statement)
         : ConstDecl(constDecl),
-        ArrayDecl(ArrayDecl),
-        VarDecl(varDecl),
-        ProcDecl(procDecl), 
-        FuncDecl(funcDecl), 
-        Statement(statement) {}
+          ArrayDecl(ArrayDecl),
+          VarDecl(varDecl),
+          ProcDecl(procDecl),
+          FuncDecl(funcDecl),
+          Statement(statement) {}
 };
 
 class ProgramAST : public DeclAST
 {
-    BlockAST* block;
+    BlockAST *block;
 
 public:
-    ProgramAST(BlockAST* block) : block(block) {}
+    Value *codegen() override;
+    ProgramAST(BlockAST *block) : block(block) {}
 };
