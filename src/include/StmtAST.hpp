@@ -6,108 +6,115 @@ class StmtAST {
         virtual ~StmtAST() = default;
 };
 
-class SingleAssignStmtAST : StmtAST {
+class SingleAssignStmtAST : public StmtAST {
     std::string var;
-    std::unique_ptr<ExprAST> RHS;
+    ExprAST* RHS;
 
     public:
-        SingleAssignStmtAST(const std::string &var, std::unique_ptr<ExprAST> RHS) : var(var), RHS(std::move(RHS)) {}
+        SingleAssignStmtAST(const std::string &var, ExprAST* RHS) : var(var), RHS(RHS) {}
 };
 
-class IndexedAssignStmtAST : StmtAST {
+class IndexedAssignStmtAST : public StmtAST {
     std::string var;
     int index;
-    std::unique_ptr<ExprAST> RHS;
+    ExprAST* RHS;
 
     public:
-        IndexedAssignStmtAST(const std::string &var, int index, std::unique_ptr<ExprAST> RHS) 
-        : var(var), index(index), RHS(std::move(RHS)) {}
+        IndexedAssignStmtAST(const std::string &var, std::string& index, ExprAST* RHS) 
+        : var(var), index(std::stoi(index)), RHS(RHS) {}
 };
 
-class ArrayAssignStmtAST : StmtAST {
+class ArrayAssignStmtAST : public StmtAST {
     std::string var;
-    std::unique_ptr<ExprAST> RHS;
+    ExprAST* RHS;
 
     public:
-        ArrayAssignStmtAST(const std::string &var, std::unique_ptr<ExprAST> RHS) : var(var), RHS(std::move(RHS)) {}
+        ArrayAssignStmtAST(const std::string &var, ExprAST* RHS) : var(var), RHS(RHS) {}
 };
 
-class ProcCallAST : StmtAST {
+class ProcCallAST : public StmtAST {
     std::string name;
 
     public:
-        ProcCallAST(const std::string &name, std::vector<std::unique_ptr<ExprAST>> args) : name(name) {}
+        ProcCallAST(const std::string &name) : name(name) {}
 };
 
-class StmtListAST : StmtAST {
-    std::vector<std::unique_ptr<StmtAST>> stmts;
+class FuncCallStmtAST : public StmtAST {
+    ExprAST* funcAST;
 
     public:
-        StmtListAST(std::vector<std::unique_ptr<StmtAST>> stmts) : stmts(std::move(stmts)) {}
-        void addToList(std::unique_ptr<StmtAST> stmt) {
-            stmts.push_back(std::move(stmt));
+        FuncCallStmtAST(ExprAST* funcAST) : funcAST(funcAST) {}
+};
+
+class StmtListAST : public StmtAST {
+    std::vector<StmtAST*> stmts;
+
+    public:
+        StmtListAST(std::vector<StmtAST*> stmts) : stmts(std::move(stmts)) {}
+        void addToList(StmtAST* stmt) {
+            stmts.push_back(stmt);
         }
 };
 
-class IfThenElseAST : StmtAST {
-    std::unique_ptr<CondAST> cond;
-    std::unique_ptr<StmtAST> thenStmt;
-    std::unique_ptr<StmtAST> elseStmt;
+class IfThenElseAST : public StmtAST {
+    CondAST* cond;
+    StmtAST* thenStmt;
+    StmtAST* elseStmt;
 
     public:
-        IfThenElseAST(std::unique_ptr<CondAST> cond, std::unique_ptr<StmtAST> thenStmt, std::unique_ptr<StmtAST> elseStmt) 
-        : cond(std::move(cond)), thenStmt(std::move(thenStmt)), elseStmt(std::move(elseStmt)) {}
+        IfThenElseAST(CondAST* cond, StmtAST* thenStmt, StmtAST* elseStmt) 
+        : cond(cond), thenStmt(thenStmt), elseStmt(elseStmt) {}
 };
 
-class IfThenAST : StmtAST {
-    std::unique_ptr<CondAST> cond;
-    std::unique_ptr<StmtAST> thenStmt;
+class IfThenAST : public StmtAST {
+    CondAST* cond;
+    StmtAST* thenStmt;
 
     public:
-        IfThenAST(std::unique_ptr<CondAST> cond, std::unique_ptr<StmtAST> thenStmt) 
-        : cond(std::move(cond)), thenStmt(std::move(thenStmt)) {}
+        IfThenAST(CondAST* cond, StmtAST* thenStmt) 
+        : cond(cond), thenStmt(thenStmt) {}
 };
 
-class WhileStmtAST : StmtAST {
-    std::unique_ptr<CondAST> cond;
-    std::unique_ptr<StmtAST> stmt;
+class WhileStmtAST : public StmtAST {
+    CondAST* cond;
+    StmtAST* stmt;
 
     public:
-        WhileStmtAST(std::unique_ptr<CondAST> cond, std::unique_ptr<StmtAST> stmt) 
-        : cond(std::move(cond)), stmt(std::move(stmt)) {}
+        WhileStmtAST(CondAST* cond, StmtAST* stmt) 
+        : cond(cond), stmt(stmt) {}
 };
 
-class ForStmtAST : StmtAST {
-    std::string var;
-    std::unique_ptr<ExprAST> start;
-    std::unique_ptr<ExprAST> end;
-    std::unique_ptr<StmtAST> stmt;
+class ForStmtAST : public StmtAST {
+    std::string loopVar;
+    ExprAST* termination;
+    bool isDownTo;
+    StmtAST* stmt;
 
     public:
-        ForStmtAST(const std::string &var, std::unique_ptr<ExprAST> start, std::unique_ptr<ExprAST> end, std::unique_ptr<StmtAST> stmt) 
-        : var(var), start(std::move(start)), end(std::move(end)), stmt(std::move(stmt)) {}
+        ForStmtAST(const std::string &loopVar, ExprAST* termination, bool isDownTo, StmtAST* stmt) 
+        : loopVar(loopVar), termination(termination), isDownTo(isDownTo), stmt(stmt) {}
+
 };
 
-class IOStmtAST : StmtAST {
+class IOStmtAST : public StmtAST {
     // 0 - read, 1 - write
     int op;
-    std::unique_ptr<ExprAST> expr;
+    ExprAST* expr;
 
     public:
-        IOStmtAST(int op, std::unique_ptr<ExprAST> expr) : op(op), expr(std::move(expr)) {}
+        IOStmtAST(int op, ExprAST* expr) : op(op), expr(expr) {}
 };
 
-class NoValControlAST : StmtAST {
+class NoValControlAST : public StmtAST {
     int type;
     
     public:
         NoValControlAST(int type) : type(type) {} 
 };
 
-class ReturnValueControlAST : StmtAST {
-    int type;
-    std::unique_ptr<ExprAST> ret;
+class ReturnValueControlAST : public StmtAST {
+    ExprAST* ret;
 
     public:
-        ReturnValueControlAST(int type, std::unique_ptr<ExprAST> ret) : type(type), ret(std::move(ret)) {}
+        ReturnValueControlAST(ExprAST* ret) : ret(ret) {}
 };

@@ -7,58 +7,68 @@ class ExprAST {
         virtual ~ExprAST() = default;
 };
 
-class FuncCallAST : ExprAST {
+class FuncCallAST : public ExprAST {
     std::string name;
-    std::vector<std::unique_ptr<ExprAST>> args;
+    ExprAST* args;
 
     public:
-        FuncCallAST(const std::string &name, std::vector<std::unique_ptr<ExprAST>> args) : name(name) args(std::move(args)) {}
+        FuncCallAST(const std::string &name, ExprAST* args) : name(name), args(args) {}
 };
 
 
 // BinaryExprAST - Binary Expression AST Node class
-class BinaryExprAST : ExprAST {
+class BinaryExprAST : public ExprAST {
     char op;
-    std::unique_ptr<ExprAST> LHS, RHS;
+    ExprAST* LHS;
+    ExprAST* RHS;
 
     public:
         // Constructor assigns the operator and the left and right hand side expressions
-        BinaryExprAST(char op, std::unique_ptr<ExprAST> LHS, std::unique_ptr<ExprAST> RHS) 
-        : op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+        BinaryExprAST(char op, ExprAST* LHS, ExprAST* RHS) 
+        : op(op), LHS(LHS), RHS(RHS) {}
 };
 
 // NumberExprAST - Unary Operation Expression AST Node class
-class UnaryExprAST : ExprAST {
+class UnaryExprAST : public ExprAST {
     char op;
-    std::unique_ptr<ExprAST> RHS;
+    ExprAST* RHS;
 
     public:
-        UnaryExprAST(char op, std::unique_ptr<ExprAST> RHS) : op(op), RHS(std::move(RHS)) {} 
+        UnaryExprAST(char op, ExprAST* RHS) : op(op), RHS(RHS) {} 
 
 };
 
 // VariableExprAST - Variable Expression AST Node class
-class VariableExprAST : ExprAST {
+class VariableExprAST : public ExprAST {
     std::string name;
 
     public:
         VariableExprAST(const std::string &name) : name(name) {}
 };
 
-// NumberExprAST - Number Expression AST Node class
-class NumberExprAST : ExprAST {
-    int val;
+class ArrayVarExprAST : public ExprAST {
+    std::string var;
+    // change this to ExprAST if you want expression indexing
+    int index;
 
     public:
-        NumberExprAST(int val) : val(val) {}
+        ArrayVarExprAST(const std::string &var, std::string &index) : var(var), index(std::stoi(index)) {}
 };
 
-class ListExprAST : ExprAST {
-    std::vector<std::unique_ptr<ExprAST>> exprs;
+// NumberExprAST - Number Expression AST Node class
+class NumberExprAST : public ExprAST {
+    std::string val;
 
     public:
-        ListExprAST(std::vector<std::unique_ptr<ExprAST>> exprs) : exprs(std::move(exprs)) {}
-        void addToList(std::unique_ptr<ExprAST> expr) {
-            exprs.push_back(std::move(expr));
+        NumberExprAST(std::string &val) : val(val) {}
+};
+
+class ListExprAST : public ExprAST {
+    std::vector<ExprAST*> exprs;
+
+    public:
+        ListExprAST(std::vector<ExprAST*> exprs) : exprs(std::move(exprs)) {}
+        void addToList(ExprAST* expr) {
+            exprs.push_back(expr);
         }
 };

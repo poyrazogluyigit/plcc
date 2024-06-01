@@ -7,110 +7,128 @@ public:
     virtual ~DeclAST() = default;
 };
 
-class ConstDeclAST : DeclAST
-{
-    std::vector<std::unique_ptr<ConstVarAST>> vars;
-    std::vector<std::unique_ptr<ConstArrayAST>> arrays;
-
-public:
-    ConstDeclAST(std::vector<std::unique_ptr<ConstVarAST>> vars, std::vector<std::unique_ptr<ConstArrayAST>> arrays)
-        : vars(std::move(vars)), arrays(std::move(arrays)) {}
-    getVars()
-    {
-        return *vars;
-    }
-    getArrays()
-    {
-        return *arrays;
-    }
-};
-
-class ConstVarAST : DeclAST
+class ConstVarAST : public DeclAST
 {
     std::string variable;
     int value;
 
 public:
-    ConstVarAST(std::string &variable, int value) : variable(variable) {}
+    ConstVarAST(std::string &variable, std::string &value) : variable(variable), value(std::stoi(value)) {}
 };
 
-class ConstArrayAST : DeclAST
-{
-    std::string var;
+class ConstArrayValuesAST : public DeclAST {
     std::vector<std::string> values;
 
-public:
-    ConstArrayAST(std::string &var, std::vector < std::string >> values) : var(var), values(std::move(values)) {}
+    public:
+        ConstArrayValuesAST(std::vector<std::string> values) : values(std::move(values)) {}
+        void addToList(std::string value) {
+            values.push_back(value);
+        }
 };
 
-class VarDeclAST : DeclAST
+class ConstArrayAST : public DeclAST
 {
-    std::vector<std::string> variables;
+    std::string var;
+    ConstArrayValuesAST* values;
+
+    public:
+        ConstArrayAST(std::string &var, ConstArrayValuesAST* values) : var(var), values(values) {}
+};
+
+class ConstDeclAST : public DeclAST
+{
+    std::vector<ConstVarAST*> vars;
+    std::vector<ConstArrayAST*> arrays;
 
 public:
-    VarDeclAST(std::vector<std::string> variables) : variables(std::move(variables)) {}
-    void addToList(std::string variables)
-    {
-        variables.push_back(variables);
+    ConstDeclAST(std::vector<ConstVarAST*> vars, std::vector<ConstArrayAST*> arrays)
+        : vars(vars), arrays(arrays) {}
+    void addVar(ConstVarAST* var) {
+        vars.push_back(var);
+    }
+    void addArray(ConstArrayAST* array) {
+        arrays.push_back(array);
     }
 };
 
-class ArrayDeclAST : DeclAST
-{
-    std::vector<std::string> arrays;
-
-public:
-    ArrayDeclAST(std::vector<std::string> arrays) : arrays(std::move(arrays)) {}
-    void addToList(std::string arrays)
-    {
-        arrays.push_back(arrays);
-    }
-};
-
-class ProcDeclAST : DeclAST
-{
-    std::unique_ptr<BlockAST> body;
-
-public:
-    ProcDeclAST(std::unique_ptr<BlockAST> body) : body(std::move(body)) {}
-};
-
-class FuncDeclAST : DeclAST
-{
+class IdentListAST : public DeclAST {
     std::vector<std::string> identifiers;
-    std::unique_ptr<BlockAST> body;
 
-public:
-    FuncDeclAST(std::vector<std::string> identifiers, std::unique_ptr<BlockAST> body)
-        : identifiers(std::move(identifiers)), body(std::move(body)) {}
-    void addToList(std::string identifiers)
-    {
-        identifiers.push_back(identifiers);
-    }
+    public:
+        IdentListAST(std::vector<std::string> identifiers) : identifiers(std::move(identifiers)) {}
+        void addToList(std::string identifier) {
+            identifiers.push_back(identifier);
+        }
+        std::vector<std::string> getIdentifiers() {
+            return identifiers;
+        }
 };
 
-class BlockAST : DeclAST
+class VarDeclAST : public DeclAST
 {
-    std::unique_ptr<ConstDeclAST> ConstDecl;
-    std::unique_ptr<VarDeclAST> VarDecl;
-    std::unique_ptr<ProcDeclAST> ProcDecl;
-    std::unique_ptr<FuncDeclAST> FuncDecl;
-    std::unique_ptr<StmtAST> Statement;
+    IdentListAST* identifiers;
 
-public:
-    BlockAST(std::unique_ptr<ConstDeclAST> constDecl,
-             std::unique_ptr<VarDeclAST> varDecl,
-             std::unique_ptr<ProcDeclAST> procDecl,
-             std::unique_ptr<FuncDeclAST> funcDecl,
-             std::unique_ptr<StmtAST> statement)
-        : ConstDecl(std::move(constDecl)), VarDecl(std::move(varDecl)),
-          ProcDecl(std::move(procDecl)), FuncDecl(std::move(funcDecl)), Statement(std::move(statement)) {}
+    public:
+        VarDeclAST(IdentListAST* identifiers) : identifiers(identifiers) {}
 };
 
-class ProgramAST : DeclAST
+class ArrayDeclAST : public DeclAST {
+    IdentListAST* arrays;
+
+    public:
+        ArrayDeclAST(IdentListAST* arrays) : arrays(arrays) {}
+};
+
+class BlockAST;
+
+class ProcDeclAST : public DeclAST
 {
-    std::unique_ptr<BlockAST> block;
+    std::string name;
+    BlockAST* body;
 
 public:
-    ProgramAST(std::unique_ptr<BlockAST> block) : block(std::move(block)) {}
+    ProcDeclAST(std::string &name, BlockAST* body) : name(name), body(body) {}
+};
+
+class FuncDeclAST : public DeclAST
+{
+    std::string name;
+    IdentListAST* identifiers;
+    BlockAST* body;
+
+    public:
+        FuncDeclAST(std::string &name, IdentListAST* identifiers, BlockAST* body)
+            : name(name), identifiers(identifiers), body(body) {}
+};
+
+class BlockAST : public DeclAST
+{
+    ConstDeclAST* ConstDecl;
+    VarDeclAST* VarDecl;
+    ArrayDeclAST* ArrayDecl;
+    ProcDeclAST* ProcDecl;
+    FuncDeclAST* FuncDecl;
+    StmtAST* Statement;
+
+public:
+    BlockAST(ConstDeclAST* constDecl,
+             VarDeclAST* varDecl,
+             ArrayDeclAST* ArrayDecl, 
+             ProcDeclAST* procDecl,
+             FuncDeclAST* funcDecl,
+             StmtAST* statement)
+        : ConstDecl(constDecl),
+        ArrayDecl(ArrayDecl),
+        VarDecl(varDecl),
+        ProcDecl(procDecl), 
+        FuncDecl(funcDecl), 
+        Statement(statement) {}
+};
+
+class ProgramAST : public DeclAST
+{
+    BlockAST* block;
+
+public:
+    ProgramAST(BlockAST* block) : block(block) {}
 };

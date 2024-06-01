@@ -6,20 +6,20 @@ class CondAST {
         virtual ~CondAST() = default;
 };
 
-class BinaryCondAST : CondAST {
+class BinaryCondAST : public CondAST {
     int op;
-    std::unique_ptr<ExprAST> LHS, RHS;
+    ExprAST* LHS;
+    ExprAST* RHS;
 
     public:
-        BinaryCondAST(int op, std::unique_ptr<ExprAST> LHS, std::unique_ptr<ExprAST> RHS) 
-        : op(op), LHS(std::move(LHS)), RHS(std::move(RHS)) {}
+        BinaryCondAST(int op, ExprAST* LHS, ExprAST* RHS) 
+        : op(op), LHS(LHS), RHS(RHS) {}
 };
 
-class UnaryCondAST : CondAST {
-    int op;
-    std::unique_ptr<ExprAST> RHS;
+class OddCondAST : public CondAST {
+    ExprAST* RHS;
 
     public:
-        UnaryCondAST(int op, std::unique_ptr<ExprAST> RHS) : op(op), RHS(std::move(RHS)) {} 
+        OddCondAST(ExprAST* RHS) : RHS(RHS) {} 
 
 };
