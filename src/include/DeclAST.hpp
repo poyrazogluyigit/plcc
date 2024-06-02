@@ -97,26 +97,49 @@ public:
 
 class BlockAST;
 
-class ProcDeclAST : public DeclAST
+class ProcDeclMonoAST : public DeclAST
 {
     std::string name;
     BlockAST *body;
 
+    public:
+        Value *codegen() override;
+        ProcDeclMonoAST(std::string &name, BlockAST *body) : name(name), body(body) {}
+};
+
+class ProcDeclAST : public DeclAST
+{
+    std::vector<ProcDeclMonoAST*> procs;
+
 public:
     Value *codegen() override;
     ProcDeclAST(std::string &name, BlockAST *body) : name(name), body(body) {}
+    void addProc(ProcDeclMonoAST* proc) {
+            procs.push_back(proc);
+        }
 };
 
-class FuncDeclAST : public DeclAST
+class FuncDeclMonoAST : public DeclAST
 {
     std::string name;
     IdentListAST *identifiers;
     BlockAST *body;
 
-public:
-    Value *codegen() override;
-    FuncDeclAST(std::string &name, IdentListAST *identifiers, BlockAST *body)
+    public:
+        FuncDeclMonoAST(std::string &name, IdentListAST* identifiers, BlockAST* body) 
         : name(name), identifiers(identifiers), body(body) {}
+        Value *codegen() override;
+};
+
+class FuncDeclAST : public DeclAST
+{
+    std::vector<FuncDeclMonoAST*> funcs;
+
+    public:
+        Value *codegen() override;
+        void addFunc(FuncDeclMonoAST* func) {
+            funcs.push_back(func);
+        }
 };
 
 class BlockAST : public DeclAST

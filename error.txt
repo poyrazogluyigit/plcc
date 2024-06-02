@@ -1,6 +1,0 @@
-./grammar/parser.y: conflicts: 19 shift/reduce
-clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated [-Wdeprecated]
-./grammar/tokens.l:7:27: warning: non-void function does not return a value [-Wreturn-type]
-extern "C" int yywrap() { }
-                          ^
-1 warning generated.

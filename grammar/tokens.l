@@ -32,8 +32,8 @@ extern "C" int yywrap() { }
 "writeline"         {return TOKEN(WRITELINE);}
 
 
-[a-zA-Z][a-zA-Z0-9]* {SAVE_TOKEN; return TOKEN(IDENTIFIER); } // identifier terminal
-[0-9]+ {SAVE_TOKEN; return TOKEN(NUMBER);} // Number terminal
+[a-zA-Z][a-zA-Z0-9]* {SAVE_TOKEN; return IDENTIFIER; } // identifier terminal
+[0-9]+ {SAVE_TOKEN; return NUMBER;} // Number terminal
 
 "=" {return TOKEN(EQ);}
 "<>" {return TOKEN(NE);}

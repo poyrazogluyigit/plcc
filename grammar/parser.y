@@ -1,6 +1,6 @@
 %{
 #include "header.hpp"
-extern ProgramAST *program;
+ProgramAST *program;
 extern FILE *yyin;
 void yyerror(std::string s);
 extern int yylineno;
@@ -105,21 +105,21 @@ ArrayDecl:
 ;
 
 IdentifierList: 
-            IDENTIFIER                              { std::vector<std::string> ids; $$ = new IdentListAST(ids); ids.push_back(*$1); } 
+            IDENTIFIER                              { $$ = new IdentListAST(); $$->addToList(*$1);} 
             | IdentifierList ',' IDENTIFIER         { $1->addToList(*$3); }
-            |                                       { std::vector<std::string> ids; $$ = new IdentListAST(ids); }
+//            |                                       { std::vector<std::string> ids; $$ = new IdentListAST(ids); }
 ;
 
 ProcDecl:
-            ProcDecl PROCEDURE IDENTIFIER ';' Block ';'                                     { $$ = new ProcDeclAST(*$3, $5);}
+            ProcDecl PROCEDURE IDENTIFIER ';' Block ';'                                     { $$->addProc(new ProcDeclMonoAST(*$3, $5));}
             | error ';'                             {yyerror("Invalid procedure declaration"); yyerrok;} 
-            |                                                                               { std::string x; $$ = new ProcDeclAST(x, nullptr); }
+            |                                                                               { $$ = new ProcDeclAST(); }
 ;
 
 FuncDecl:
-            FUNCTION IDENTIFIER '(' IdentifierList ')' ';' Block ';'                        { $$ = new FuncDeclAST(*$2, $4, $7);}
+            FUNCTION IDENTIFIER '(' IdentifierList ')' ';' Block ';'                        { $$->addFunc(new FuncDeclMonoAST(*$2, $4, $7));}
             | error ';'                             {yyerror("Invalid function declaration"); yyerrok;} 
-            |                                                                               { std::string x; $$ = new FuncDeclAST(x, nullptr, nullptr); }    
+            |                                                                               { $$ = new FuncDeclAST(); }    
 ;    
 
 ConstArray: NUMBER                                  { std::vector<std::string> nums; $$ = new ConstArrayValuesAST(nums); nums.push_back(*$1); }
@@ -131,7 +131,7 @@ ConstArray: NUMBER                                  { std::vector<std::string> n
 Statement : 
             IDENTIFIER ASGN Expression                                  { $$ = new SingleAssignStmtAST(*$1, $3); }
             | IDENTIFIER ASGN '[' GeneralList ']'                       { $$ = new ArrayAssignStmtAST(*$1, $4); }                       
-            | IDENTIFIER '[' NUMBER ']' ASGN Expression                 { $$ = new IndexedAssignStmtAST(*$1, *$3, $6); }
+            | IDENTIFIER '[' Expression ']' ASGN Expression             { $$ = new IndexedAssignStmtAST(*$1, $3, $6); }
             | CALL IDENTIFIER                                           { $$ = new ProcCallAST(*$2); }
             | FuncCall                                                  { $$ = new FuncCallStmtAST($1);}
             | BEGN StatementList END                                    { $$ = $2; }
@@ -139,11 +139,10 @@ Statement :
             | LoopStatement
             | ControlStatement
             | IOStatement
-            |                                                           { std::vector<StmtAST*> stmts; $$ = new StmtListAST(stmts);}
+            |                                                           { $$ = new StmtListAST();}
             | error END             {yyerror("Invalid statement"); yyerrok;}
             | error ';'             {yyerror("Invalid statement"); yyerrok;}
             | error                 {yyerror("Invalid statement");}
-
             ;
 
 // statement FOLLOW = [IDENTIFIER CALL BEGIN IF WHILE FOR BREAK RETURN WRITELINE READ READLINE %empty '.' ';' END ELSE]
@@ -183,7 +182,7 @@ ControlStatement:
             ;               
 
 StatementList:
-            Statement                                                                   { std::vector<StmtAST*> stmts; $$ = new StmtListAST(stmts); } 
+            Statement                                                                   { $$ = new StmtListAST(); $$->addToList($1);} 
             | StatementList ';' Statement                                               { $1->addToList($3); }
             | StatementList error {yyerror("Missing semicolon"); yyerrok;} Statement
             ;
@@ -218,7 +217,7 @@ Expression  :   Expression PLUS Expression                  { $$ = new BinaryExp
                 | PLUS Expression    %prec UPLUS            { $$ = new UnaryExprAST('+', $2); }
                 | MINUS Expression    %prec UMINUS          { $$ = new UnaryExprAST('-', $2); }
                 | IDENTIFIER                                { $$ = new VariableExprAST(*$1); }
-                | IDENTIFIER '[' NUMBER ']'                 { $$ = new ArrayVarExprAST(*$1, *$3); }
+                | IDENTIFIER '[' Expression ']'             { $$ = new ArrayVarExprAST(*$1, $3); }
                 | NUMBER                                    { $$ = new NumberExprAST(*$1)}
                 | '(' Expression ')'                        { $$ = $2; }
                 | FuncCall                                  
@@ -229,4 +228,13 @@ Expression  :   Expression PLUS Expression                  { $$ = new BinaryExp
 
 void yyerror(std::string s) {
     std::cerr << "line " << yylineno << ": " << s << std::endl;
+}
+
+
+int main(int argc, char ** argv){
+
+    yyin = fopen(argv[1], "r");
+    yyparse();
+    fclose(yyin);
+
 }

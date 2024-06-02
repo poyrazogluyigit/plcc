@@ -125,7 +125,7 @@ class ArrayVarExprAST : public ExprAST
 {
     std::string var;
     // change this to ExprAST if you want expression indexing
-    int index;
+    ExprAST* index;
 
 public:
     Value *VariableExprAST::codegen()
@@ -139,7 +139,7 @@ public:
 
         return V[(int)index];
     }
-    ArrayVarExprAST(const std::string &var, std::string &index) : var(var), index(std::stoi(index)) {}
+    ArrayVarExprAST(const std::string &var, ExprAST* index) : var(var), index(index) {}
 };
 
 // NumberExprAST - Number Expression AST Node class

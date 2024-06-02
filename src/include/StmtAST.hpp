@@ -21,8 +21,8 @@ public:
 class IndexedAssignStmtAST : public StmtAST
 {
     std::string var;
-    int index;
-    ExprAST *RHS;
+    ExprAST* index;
+    ExprAST* RHS;
 
 public:
     Value *codegen() override;

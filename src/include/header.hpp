@@ -15,3 +15,4 @@ extern std::map<std::string, Value *> NamedValues;
 
 Value *LogErrorV(const char *Str);
 void yyparse();
+
