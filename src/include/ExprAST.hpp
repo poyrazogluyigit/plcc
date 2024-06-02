@@ -3,8 +3,20 @@
 
 // ExprAST - Base AST class for all expression nodes
 class ExprAST {
+    protected:
+        std::vector<std::string> code;
+        std::string nextReg;
     public:
         virtual ~ExprAST() = default;
+        std::vector<std::string> getCode(){
+            return code;
+        }
+        std::string getNextReg(){
+            return nextReg;
+        }
+        void setNextReg(std::string reg){
+            nextReg = reg;
+        }
 };
 
 class FuncCallAST : public ExprAST {
@@ -18,14 +30,13 @@ class FuncCallAST : public ExprAST {
 
 // BinaryExprAST - Binary Expression AST Node class
 class BinaryExprAST : public ExprAST {
-    char op;
+    std::string op;
     ExprAST* LHS;
     ExprAST* RHS;
 
     public:
         // Constructor assigns the operator and the left and right hand side expressions
-        BinaryExprAST(char op, ExprAST* LHS, ExprAST* RHS) 
-        : op(op), LHS(LHS), RHS(RHS) {}
+        BinaryExprAST(std::string op, ExprAST* LHS, ExprAST* RHS);
 };
 
 // NumberExprAST - Unary Operation Expression AST Node class
@@ -43,7 +54,7 @@ class VariableExprAST : public ExprAST {
     std::string name;
 
     public:
-        VariableExprAST(const std::string &name) : name(name) {}
+        VariableExprAST(const std::string &name);
 };
 
 class ArrayVarExprAST : public ExprAST {
@@ -60,7 +71,8 @@ class NumberExprAST : public ExprAST {
     std::string val;
 
     public:
-        NumberExprAST(std::string &val) : val(val) {}
+        NumberExprAST(std::string &val) : val(val) {this->setNextReg(val);}
+        std::string codeGen();
 };
 
 class ListExprAST : public ExprAST {

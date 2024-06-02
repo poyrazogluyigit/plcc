@@ -1,0 +1,13 @@
+const a = 3, b = 4, c = 5;
+
+var x, y, z;
+
+begin
+    read(z);
+    x := 2;
+    y := 3 + 4;
+    z := x * y;
+    writeline(x);
+    writeline(y);
+    writeline(z);
+end.

@@ -1,9 +1,32 @@
 #pragma once
 #include "header.hpp"
 
+class ExprAST;
+class CondAST;
+
+
 class StmtAST {
+    protected:
+        std::vector<std::string> code;
+        std::string nextReg;
+        std::string nextLabel;
     public:
         virtual ~StmtAST() = default;
+        std::string getNextReg(){
+            return nextReg;
+        }
+        void setNextReg(std::string reg){
+            nextReg = reg;
+        }
+        std::vector<std::string> getCode(){
+            return code;
+        }
+        void setNextLabel(std::string label){
+            nextLabel = label;
+        }
+        std::string getNextLabel(){
+            return nextLabel;
+        }
 };
 
 class SingleAssignStmtAST : public StmtAST {
@@ -11,7 +34,8 @@ class SingleAssignStmtAST : public StmtAST {
     ExprAST* RHS;
 
     public:
-        SingleAssignStmtAST(const std::string &var, ExprAST* RHS) : var(var), RHS(RHS) {}
+        SingleAssignStmtAST(const std::string &var, ExprAST* RHS);
+        void assignment();
 };
 
 class IndexedAssignStmtAST : public StmtAST {
@@ -53,6 +77,7 @@ class StmtListAST : public StmtAST {
         void addToList(StmtAST* stmt) {
             stmts.push_back(stmt);
         }
+        void pullCodeFromLeafs();
 };
 
 class IfThenElseAST : public StmtAST {
@@ -70,8 +95,7 @@ class IfThenAST : public StmtAST {
     StmtAST* thenStmt;
 
     public:
-        IfThenAST(CondAST* cond, StmtAST* thenStmt) 
-        : cond(cond), thenStmt(thenStmt) {}
+        IfThenAST(CondAST* cond, StmtAST* thenStmt);
 };
 
 class WhileStmtAST : public StmtAST {
@@ -101,7 +125,8 @@ class IOStmtAST : public StmtAST {
     ExprAST* expr;
 
     public:
-        IOStmtAST(int op, ExprAST* expr) : op(op), expr(expr) {}
+        IOStmtAST(int op, ExprAST* expr);
+        IOStmtAST(int op, const std::string& var);
 };
 
 class NoValControlAST : public StmtAST {

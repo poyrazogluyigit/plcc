@@ -1,0 +1,8 @@
+var a, b;
+
+begin
+    read(a);
+    read(b);
+    if a > b then writeline(a);
+    writeline(b);
+end.

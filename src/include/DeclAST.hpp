@@ -1,8 +1,12 @@
 #pragma once
 #include "header.hpp"
 
+class StmtAST;
+
 class DeclAST
 {
+protected:
+    std::vector<std::string> code;
 public:
     virtual ~DeclAST() = default;
 };
@@ -14,6 +18,12 @@ class ConstVarAST : public DeclAST
 
 public:
     ConstVarAST(std::string &variable, std::string &value) : variable(variable), value(std::stoi(value)) {}
+    std::string getVar() {
+        return variable;
+    }
+    int getValue() {
+        return value;
+    }
 };
 
 class ConstArrayValuesAST : public DeclAST {
@@ -42,11 +52,15 @@ class ConstDeclAST : public DeclAST
 public:
     ConstDeclAST(std::vector<ConstVarAST*> vars, std::vector<ConstArrayAST*> arrays)
         : vars(vars), arrays(arrays) {}
+    void generate();
     void addVar(ConstVarAST* var) {
         vars.push_back(var);
     }
     void addArray(ConstArrayAST* array) {
         arrays.push_back(array);
+    }
+    std::vector<std::string> getCode() {
+        return code;
     }
 };
 
@@ -68,6 +82,10 @@ class VarDeclAST : public DeclAST
 
     public:
         VarDeclAST(IdentListAST* identifiers) : identifiers(identifiers) {}
+        void generate();
+        std::vector<std::string> getCode() {
+            return code;
+        }
 };
 
 class ArrayDeclAST : public DeclAST {
@@ -75,6 +93,9 @@ class ArrayDeclAST : public DeclAST {
 
     public:
         ArrayDeclAST(IdentListAST* arrays) : arrays(arrays) {}
+        std::vector<std::string> getCode() {
+            return code;
+        }
 };
 
 class BlockAST;
@@ -95,6 +116,9 @@ class ProcDeclAST : public DeclAST
     public:
         void addProc(ProcDeclMonoAST* proc) {
             procs.push_back(proc);
+        }
+        std::vector<std::string> getCode() {
+            return code;
         }
 };
 
@@ -117,36 +141,42 @@ class FuncDeclAST : public DeclAST
         void addFunc(FuncDeclMonoAST* func) {
             funcs.push_back(func);
         }
+        std::vector<std::string> getCode() {
+            return code;
+        }
 };
 
 class BlockAST : public DeclAST
 {
-    ConstDeclAST* ConstDecl;
-    VarDeclAST* VarDecl;
-    ArrayDeclAST* ArrayDecl;
-    ProcDeclAST* ProcDecl;
-    FuncDeclAST* FuncDecl;
-    StmtAST* Statement;
+    public:
+        ConstDeclAST* ConstDecl;
+        VarDeclAST* VarDecl;
+        ArrayDeclAST* ArrayDecl;
+        ProcDeclAST* ProcDecl;
+        FuncDeclAST* FuncDecl;
+        StmtAST* Statement;
 
-public:
-    BlockAST(ConstDeclAST* constDecl,
-             VarDeclAST* varDecl,
-             ArrayDeclAST* ArrayDecl, 
-             ProcDeclAST* procDecl,
-             FuncDeclAST* funcDecl,
-             StmtAST* statement)
-        : ConstDecl(constDecl),
-        ArrayDecl(ArrayDecl),
-        VarDecl(varDecl),
-        ProcDecl(procDecl), 
-        FuncDecl(funcDecl), 
-        Statement(statement) {}
+        BlockAST(ConstDeclAST* constDecl,
+                VarDeclAST* varDecl,
+                ArrayDeclAST* ArrayDecl, 
+                ProcDeclAST* procDecl,
+                FuncDeclAST* funcDecl,
+                StmtAST* statement)
+            : ConstDecl(constDecl),
+            ArrayDecl(ArrayDecl),
+            VarDecl(varDecl),
+            ProcDecl(procDecl), 
+            FuncDecl(funcDecl), 
+            Statement(statement) {}
+    //    std::vector<std::string> getCode();
 };
 
 class ProgramAST : public DeclAST
 {
     BlockAST* block;
 
-public:
-    ProgramAST(BlockAST* block) : block(block) {}
+    public:
+        ProgramAST(BlockAST* block) : block(block) {}
+        void generateCode();
+        void writeToFile();
 };

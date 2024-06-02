@@ -5,7 +5,9 @@ extern FILE *yyin;
 void yyerror(std::string s);
 extern int yylineno;
 extern int yylex();
+std::ofstream output_file;
 // int yydebug = 1;
+int tempVar = 1;
 %}
 
 %union{
@@ -60,13 +62,13 @@ extern int yylex();
 
 %%
 // Rules
-Program : Block '.' {program = new ProgramAST($1)};    // '>''='   
+Program : Block '.' {program = new ProgramAST($1); program->generateCode(); };    // '>''='   
 
 Block : ConstDecl VarDecl ArrayDecl ProcDecl FuncDecl Statement { $$ = new BlockAST($1, $2, $3, $4, $5, $6); }
         | error '.' {yyerror("Invalid block construct"); yyerrok;}
         ;
 
-ConstDecl : CONST ConstAssignmentList ';'       { $$ = $2; }
+ConstDecl : CONST ConstAssignmentList ';'       { $$ = $2; $$->generate(); }
             |                                   { std::vector<ConstVarAST*> vars; std::vector<ConstArrayAST*> arrays; $$ = new ConstDeclAST(vars, arrays);}
             | error ';'                          {yyerror("Invalid const declaration"); yyerrok;}
             ;  
@@ -93,7 +95,7 @@ ConstAssignmentList :
                         ;
 
 VarDecl:
-        VAR IdentifierList ';'                  { $$ = new VarDeclAST($2); }
+        VAR IdentifierList ';'                  { $$ = new VarDeclAST($2); $$->generate(); }
         |                                       { $$ = new VarDeclAST(nullptr); }
         | error ';'                             {yyerror("Invalid variable declaration"); yyerrok;}                         
 ;
@@ -134,11 +136,11 @@ Statement :
             | IDENTIFIER '[' Expression ']' ASGN Expression             { $$ = new IndexedAssignStmtAST(*$1, $3, $6); }
             | CALL IDENTIFIER                                           { $$ = new ProcCallAST(*$2); }
             | FuncCall                                                  { $$ = new FuncCallStmtAST($1);}
-            | BEGN StatementList END                                    { $$ = $2; }
+            | BEGN StatementList END                                    { $2->pullCodeFromLeafs(); $$ = $2; }
             | ConditionalStatement
             | LoopStatement
             | ControlStatement
-            | IOStatement
+            | IOStatement                                               { $$ = $1; }
             |                                                           { $$ = new StmtListAST();}
             | error END             {yyerror("Invalid statement"); yyerrok;}
             | error ';'             {yyerror("Invalid statement"); yyerrok;}
@@ -160,7 +162,7 @@ LoopStatement:   WHILE Condition DO Statement                                   
                 ;  
             
 IOStatement: 
-            READ '(' Expression ')'                                                         { $$ = new IOStmtAST(0, $3); }
+            READ '(' IDENTIFIER ')'                                                         { $$ = new IOStmtAST(0, *$3); }
             | WRITE'(' Expression ')'                                                       { $$ = new IOStmtAST(1, $3); }
             | WRITELINE '(' Expression ')'                                                  { $$ = new IOStmtAST(2, $3); }
             | READ '(' error ')' {yyerror("Invalid read() call"); yyerrok;}
@@ -189,12 +191,12 @@ StatementList:
 
 Condition :
             ODD Expression                              { $$ = new OddCondAST($2); } 
-            | Expression EQ Expression                  { $$ = new BinaryCondAST(0, $1, $3); }
-            | Expression NE Expression                  { $$ = new BinaryCondAST(1, $1, $3); }
-            | Expression GT Expression                  { $$ = new BinaryCondAST(2, $1, $3); }
-            | Expression LT Expression                  { $$ = new BinaryCondAST(3, $1, $3); }
-            | Expression LEQ Expression                 { $$ = new BinaryCondAST(4, $1, $3); }
-            | Expression GEQ Expression                 { $$ = new BinaryCondAST(5, $1, $3); }
+            | Expression EQ Expression                  { $$ = new BinaryCondAST("eq", $1, $3); }
+            | Expression NE Expression                  { $$ = new BinaryCondAST("ne", $1, $3); }
+            | Expression GT Expression                  { $$ = new BinaryCondAST("sgt", $1, $3); }
+            | Expression LT Expression                  { $$ = new BinaryCondAST("slt", $1, $3); }
+            | Expression LEQ Expression                 { $$ = new BinaryCondAST("sge", $1, $3); }
+            | Expression GEQ Expression                 { $$ = new BinaryCondAST("sle", $1, $3); }
             ;
 
 
@@ -209,20 +211,20 @@ GeneralList:    NUMBER                                  { std::vector<ExprAST*> 
 
 
 
-Expression  :   Expression PLUS Expression                  { $$ = new BinaryExprAST('+', $1, $3); }
-                | Expression MINUS Expression               { $$ = new BinaryExprAST('-', $1, $3); }
-                | Expression MUL Expression                 { $$ = new BinaryExprAST('*', $1, $3); }
-                | Expression DIV Expression                 { $$ = new BinaryExprAST('/', $1, $3); }
-                | Expression MOD Expression                 { $$ = new BinaryExprAST('%', $1, $3); }
-                | PLUS Expression    %prec UPLUS            { $$ = new UnaryExprAST('+', $2); }
+Expression  :   Expression PLUS Expression                  { $$ = new BinaryExprAST("add", $1, $3); }
+                | Expression MINUS Expression               { $$ = new BinaryExprAST("sub", $1, $3); }
+                | Expression MUL Expression                 { $$ = new BinaryExprAST("mul", $1, $3); }
+                | Expression DIV Expression                 { $$ = new BinaryExprAST("sdiv", $1, $3); }
+                | Expression MOD Expression                 { $$ = new BinaryExprAST("srem", $1, $3); }
+                | PLUS Expression    %prec UPLUS            { $$ = $2; }
                 | MINUS Expression    %prec UMINUS          { $$ = new UnaryExprAST('-', $2); }
                 | IDENTIFIER                                { $$ = new VariableExprAST(*$1); }
                 | IDENTIFIER '[' Expression ']'             { $$ = new ArrayVarExprAST(*$1, $3); }
-                | NUMBER                                    { $$ = new NumberExprAST(*$1)}
+                | NUMBER                                    { $$ = new NumberExprAST(*$1); }
                 | '(' Expression ')'                        { $$ = $2; }
                 | FuncCall                                  
                 ;
-
+                
 %%
 // User Subroutines
 
@@ -234,7 +236,17 @@ void yyerror(std::string s) {
 int main(int argc, char ** argv){
 
     yyin = fopen(argv[1], "r");
+    output_file = std::ofstream(argv[2]);
     yyparse();
+    program->writeToFile();
     fclose(yyin);
-
+    if(argc == 4){
+        std::string optimizationLevel = argv[3];
+        std::string inputFile = argv[2];
+        std::string outputFilePrefix = "optimized";
+        std::string command = "opt -" + optimizationLevel + " -S " + inputFile + " -o " + inputFile;
+        std::cout << command << std::endl;
+        int res = system(command.c_str());
+        std::cout << res << std::endl;
+    }
 }

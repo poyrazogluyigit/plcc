@@ -3,6 +3,9 @@ CC = g++
 LEX = flex -I
 YACC = bison -d
 
+SOURCES = ExprAST.cpp CondAST.cpp StmtAST.cpp DeclAST.cpp
+OBJECTS = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
+
 SRC_DIR = ./src
 LEX_YACC_DIR = ./grammar
 BUILD_DIR = ./build
@@ -16,14 +19,14 @@ DEBUG_FLAGS = --debug --verbose -k # -Wcounterexamples --report all
 CFLAGS = -g -I $(INC_DIR) -std=c++11 -ferror-limit=75 # -DYYDEBUG=1
 
 # Target for the plcc executable
-plcc: $(BUILD_DIR)/parser.o $(BUILD_DIR)/lex.yy.o
-	$(CC) $(CFLAGS) $(BUILD_DIR)/parser.o $(BUILD_DIR)/lex.yy.o -ly -ll -lm -o plcc
+plcc: $(BUILD_DIR)/parser.o $(BUILD_DIR)/lex.yy.o $(OBJECTS)
+	$(CC) $(CFLAGS) $(BUILD_DIR)/parser.o $(BUILD_DIR)/lex.yy.o $(OBJECTS)  -ly -ll -lm -o plcc
 
 # Rule to compile lex.yy.o and y.tab.o from their respective sources
 $(BUILD_DIR)/lex.yy.o: $(GENERATE_DIR)/lex.yy.c $(GENERATE_DIR)/parser.hpp
 	$(CC) -c $(CFLAGS) -o $@ $(GENERATE_DIR)/lex.yy.c
 
-$(BUILD_DIR)/parser.o: $(GENERATE_DIR)/parser.cpp
+$(BUILD_DIR)/parser.o: $(GENERATE_DIR)/parser.cpp $(OBJECTS)
 	$(CC) -c $(CFLAGS) -o $@ $(GENERATE_DIR)/parser.cpp
 
 # Generate parser files from grmr.y
@@ -33,6 +36,10 @@ $(GENERATE_DIR)/parser.cpp $(GENERATE_DIR)/parser.hpp: $(LEX_YACC_DIR)/parser.y
 # Generate lexer file from tokens.l
 $(GENERATE_DIR)/lex.yy.c: $(LEX_YACC_DIR)/tokens.l
 	$(LEX) -o $(GENERATE_DIR)/lex.yy.c $(LEX_YACC_DIR)/tokens.l
+
+# Rule to compile .cpp files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 # Target for debugging mode
 debug: YACC += $(DEBUG_FLAGS)

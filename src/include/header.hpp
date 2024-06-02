@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <fstream>
+#include <iterator>
 // include order matters, dependencies:
 // stmt -> expr, cond
 // cond -> expr
@@ -8,6 +11,5 @@
 #include "CondAST.hpp"
 #include "StmtAST.hpp"
 #include "DeclAST.hpp"
-
 int yyparse();
 
