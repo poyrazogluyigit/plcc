@@ -9,5 +9,5 @@
 #include "StmtAST.hpp"
 #include "DeclAST.hpp"
 
-void yyparse();
+int yyparse();
 

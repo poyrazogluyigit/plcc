@@ -122,7 +122,7 @@ FuncDecl:
             |                                                                               { $$ = new FuncDeclAST(); }    
 ;    
 
-ConstArray: NUMBER                                  { std::vector<std::string> nums; $$ = new ConstArrayValuesAST(nums); nums.push_back(*$1); }
+ConstArray: NUMBER                                  { $$ = new ConstArrayValuesAST(); $$->addToList(*$1); }
             | ConstArray ',' NUMBER                 { $1->addToList(*$3); }
             | ConstArray error NUMBER               {yyerror("Invalid list construct"); yyerrok;}
             ;

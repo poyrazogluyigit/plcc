@@ -20,7 +20,6 @@ class ConstArrayValuesAST : public DeclAST {
     std::vector<std::string> values;
 
     public:
-        ConstArrayValuesAST(std::vector<std::string> values) : values(std::move(values)) {}
         void addToList(std::string value) {
             values.push_back(value);
         }
