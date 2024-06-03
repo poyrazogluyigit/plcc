@@ -1,6 +1,8 @@
 #pragma once
 #include "header.hpp"
 
+extern std::map<std::string, std::string> consts;
+
 // ExprAST - Base AST class for all expression nodes
 class ExprAST {
     protected:
@@ -55,6 +57,9 @@ class VariableExprAST : public ExprAST {
 
     public:
         VariableExprAST(const std::string &name);
+        bool isConst(){
+            return consts.find(this->name) != consts.end();
+        }
 };
 
 class ArrayVarExprAST : public ExprAST {

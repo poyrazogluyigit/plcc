@@ -17,8 +17,11 @@ br i1 %8, label %9, label %12
 9:
 %10 = load i32, i32* %a
 call i32 (i8*, ...) @printf(i8* getelementptr ([4 x i8], [4 x i8]* @writeline.str, i32 0, i32 0), i32 %10)
+br label %15
 12:
-%14 = load i32, i32* %b
-call i32 (i8*, ...) @printf(i8* getelementptr ([4 x i8], [4 x i8]* @writeline.str, i32 0, i32 0), i32 %14)
+%13 = load i32, i32* %b
+call i32 (i8*, ...) @printf(i8* getelementptr ([4 x i8], [4 x i8]* @writeline.str, i32 0, i32 0), i32 %13)
+br label %15
+15:
 ret i32 0
 }

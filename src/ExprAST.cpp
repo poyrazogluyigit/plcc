@@ -6,7 +6,11 @@ VariableExprAST::VariableExprAST(const std::string &name)
 : name(name) {
     // load variable into temp
     std::stringstream line;
-    line << "%" << ++tempVar << " = load i32, i32* %" << this->name << "\n";
+    line << "%" << ++tempVar << " = load i32, i32* ";
+    if (this->isConst())
+        line << "@" << this->name << "\n";
+    else
+        line << "%" << this->name << "\n";
     this->code.push_back(line.str());
     this->setNextReg("%" + std::to_string(tempVar));
 }

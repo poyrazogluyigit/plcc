@@ -4,12 +4,15 @@
 class ExprAST;
 class CondAST;
 
+extern std::vector<std::string> labels;
+
 
 class StmtAST {
     protected:
         std::vector<std::string> code;
         std::string nextReg;
         std::string nextLabel;
+        std::string prevLabel;
     public:
         virtual ~StmtAST() = default;
         std::string getNextReg(){
@@ -26,6 +29,14 @@ class StmtAST {
         }
         std::string getNextLabel(){
             return nextLabel;
+        }
+        void setPrevLabel(){
+            std::string label = labels.back();
+            this->prevLabel = label;
+            labels.pop_back();
+        }
+        std::string getPrevLabel(){
+            return prevLabel;
         }
 };
 
@@ -44,8 +55,7 @@ class IndexedAssignStmtAST : public StmtAST {
     ExprAST* RHS;
 
     public:
-        IndexedAssignStmtAST(const std::string &var, ExprAST* index, ExprAST* RHS) 
-        : var(var), index(index), RHS(RHS) {}
+        IndexedAssignStmtAST(const std::string &var, ExprAST* index, ExprAST* RHS);
 };
 
 class ArrayAssignStmtAST : public StmtAST {
@@ -86,8 +96,7 @@ class IfThenElseAST : public StmtAST {
     StmtAST* elseStmt;
 
     public:
-        IfThenElseAST(CondAST* cond, StmtAST* thenStmt, StmtAST* elseStmt) 
-        : cond(cond), thenStmt(thenStmt), elseStmt(elseStmt) {}
+        IfThenElseAST(CondAST* cond, StmtAST* thenStmt, StmtAST* elseStmt);
 };
 
 class IfThenAST : public StmtAST {
@@ -103,8 +112,7 @@ class WhileStmtAST : public StmtAST {
     StmtAST* stmt;
 
     public:
-        WhileStmtAST(CondAST* cond, StmtAST* stmt) 
-        : cond(cond), stmt(stmt) {}
+        WhileStmtAST(CondAST* cond, StmtAST* stmt);
 };
 
 class ForStmtAST : public StmtAST {

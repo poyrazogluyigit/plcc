@@ -22,6 +22,8 @@ void ProgramAST::generateCode(){
     this->code.push_back("\ndefine i32 @main() {\n");
     for (auto &line : this->block->VarDecl->getCode())
         this->code.push_back(std::move(line));
+    for (auto &line : this->block->ArrayDecl->getCode())
+        this->code.push_back(std::move(line));
     for (auto &line : this->block->Statement->getCode())
         this->code.push_back(std::move(line));
     this->code.push_back("ret i32 0\n}\n");
@@ -52,7 +54,7 @@ void VarDeclAST::generate(){
     std::vector<std::string> varDecls;
     std::stringstream line;
     for (auto &var : this->identifiers->getIdentifiers()) {
-        line << "%" << var << " = alloca i32\n";
+        line << "%" << var[0] << " = alloca i32\n";
         this->code.push_back(line.str());
         line.str(std::string());
     }

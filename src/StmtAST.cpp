@@ -11,11 +11,24 @@ SingleAssignStmtAST::SingleAssignStmtAST(const std::string &var, ExprAST* RHS)
     this->setNextLabel(std::to_string(++tempVar));
 }
 
+IndexedAssignStmtAST::IndexedAssignStmtAST(const std::string &var, ExprAST* index, ExprAST* RHS)
+: var(var), index(index), RHS(RHS) {
+    for (auto &line : index->getCode())
+        this->code.push_back(std::move(line));
+    for (auto &line : RHS->getCode())
+        this->code.push_back(std::move(line));
+    this->code.push_back("store i32 " + RHS->getNextReg() + ", i32* getelementptr inbounds (i32, i32* %" + var + ", i32 " + index->getNextReg() + ")\n");
+    this->setNextReg("%" + std::to_string(tempVar));
+    this->setNextLabel(std::to_string(++tempVar));
+}
+
 void StmtListAST::pullCodeFromLeafs(){
     for (auto &stmt : this->stmts) {
-        if (stmt->getCode().size() > 0)
+        if (stmt->getCode().size() > 0){
             for (auto &line : stmt->getCode())
                 this->code.push_back(std::move(line));
+            this->setNextLabel(stmt->getNextLabel());
+        }
     }
 }
 
@@ -43,9 +56,42 @@ IfThenAST::IfThenAST(CondAST* cond, StmtAST* thenStmt)
     for (auto &line : cond->getCode())
         this->code.push_back(line);
     this->code.push_back("br i1 " + cond->getNextReg() + ", label %" + cond->getTrueLabel() + ", label %" + thenStmt->getNextLabel() + "\n");
-    this->code.push_back(cond->getTrueLabel() + ":\t\t\t\t;pred" + +"\n");
+    this->code.push_back(cond->getTrueLabel() +"\n");
     for (auto &line : thenStmt->getCode())
         this->code.push_back(line);
-    this->code.push_back(thenStmt->getNextLabel() + ":\n");
+    this->code.push_back("br label %" + thenStmt->getNextLabel() + "\n" + thenStmt->getNextLabel() + ":\n");
     this->setNextLabel(std::to_string(++tempVar));
 }
+
+IfThenElseAST::IfThenElseAST(CondAST* cond, StmtAST* thenStmt, StmtAST* elseStmt)
+: cond(cond), thenStmt(thenStmt), elseStmt(elseStmt) {
+    for (auto &line : cond->getCode())
+        this->code.push_back(line);
+    cond->setFalseLabel(thenStmt->getNextLabel());
+    this->code.push_back("br i1 " + cond->getNextReg() + ", label %" + cond->getTrueLabel() + ", label %" + cond->getFalseLabel() + "\n");
+    this->code.push_back(cond->getTrueLabel() + ":\n");
+    for (auto &line : thenStmt->getCode())
+        this->code.push_back(line);
+    this->code.push_back("br label %" + elseStmt->getNextLabel() + "\n" + thenStmt->getNextLabel() + ":\n");
+//    this->code.push_back("br label %" + elseStmt->getNextLabel() + "\n" + elseStmt->getNextLabel() + ":\n");
+    for (auto &line : elseStmt->getCode())
+        this->code.push_back(line);
+    this->code.push_back("br label %" + elseStmt->getNextLabel() + "\n" + elseStmt->getNextLabel() + ":\n");
+    this->setNextLabel(std::to_string(++tempVar));
+}
+
+WhileStmtAST::WhileStmtAST(CondAST* cond, StmtAST* stmt) 
+: cond(cond), stmt(stmt) {
+    this->code.push_back("br label %" + cond->getTrueLabel() + "\n");
+    this->setPrevLabel();
+    this->code.push_back(this->getPrevLabel() + ":\n");
+    for (auto &line : cond->getCode())
+        this->code.push_back(line);
+    this->code.push_back("br i1 " + cond->getNextReg() + ", label %" + cond->getTrueLabel() + ", label %" + stmt->getNextLabel() + "\n");
+    this->code.push_back(cond->getTrueLabel() + ":\n");
+    for (auto &line : stmt->getCode())
+        this->code.push_back(line);
+    this->code.push_back("br label %" + this->getPrevLabel() + "\n" + stmt->getNextLabel() + ":\n");
+    this->setNextLabel(std::to_string(++tempVar));
+}
+

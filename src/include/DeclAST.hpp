@@ -69,7 +69,7 @@ class IdentListAST : public DeclAST {
 
     public:
         void addToList(const std::string &identifier) {
-            identifiers.push_back(std::move(identifier));
+            identifiers.push_back(identifier);
         }
         std::vector<std::string> getIdentifiers() {
             return identifiers;

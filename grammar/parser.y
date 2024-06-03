@@ -3,9 +3,12 @@
 ProgramAST *program;
 extern FILE *yyin;
 void yyerror(std::string s);
+void newLabel();
 extern int yylineno;
 extern int yylex();
 std::ofstream output_file;
+std::vector<std::string> labels;
+std::map<std::string, std::string> consts;
 // int yydebug = 1;
 int tempVar = 1;
 %}
@@ -75,21 +78,25 @@ ConstDecl : CONST ConstAssignmentList ';'       { $$ = $2; $$->generate(); }
 
 ConstAssignmentList : 
                         IDENTIFIER EQ NUMBER  {
+                            consts[*$1] = *$1;
                             std::vector<ConstVarAST*> vars; 
                             std::vector<ConstArrayAST*> arrays;
                             vars.push_back(new ConstVarAST(*$1, *$3));
                             $$ = new ConstDeclAST(vars, arrays);
                             }
                         | ARRAY IDENTIFIER EQ  '[' ConstArray ']' {
+                            consts[*$2] = *$2;
                             std::vector<ConstVarAST*> vars; 
                             std::vector<ConstArrayAST*> arrays;
                             arrays.push_back(new ConstArrayAST(*$2, $5));
                             $$ = new ConstDeclAST(vars, arrays);
                         }
                         | ConstAssignmentList ',' IDENTIFIER EQ NUMBER {
+                            consts[*$3] = *$3;
                             $1->addVar(new ConstVarAST(*$3, *$5));
                         }
                         | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']' {
+                            consts[*$4] = *$4;
                             $1->addArray(new ConstArrayAST(*$4, $7));
                         }
                         ;
@@ -107,8 +114,8 @@ ArrayDecl:
 ;
 
 IdentifierList: 
-            IDENTIFIER                              { $$ = new IdentListAST(); $$->addToList(*$1);} 
-            | IdentifierList ',' IDENTIFIER         { $1->addToList(*$3); }
+            IDENTIFIER                            { $$ = new IdentListAST(); $$->addToList(*$1);} 
+            | IdentifierList ',' IDENTIFIER       { $1->addToList(*$3); }
 //            |                                       { std::vector<std::string> ids; $$ = new IdentListAST(ids); }
 ;
 
@@ -132,7 +139,7 @@ ConstArray: NUMBER                                  { $$ = new ConstArrayValuesA
 
 Statement : 
             IDENTIFIER ASGN Expression                                  { $$ = new SingleAssignStmtAST(*$1, $3); }
-            | IDENTIFIER ASGN '[' GeneralList ']'                       { $$ = new ArrayAssignStmtAST(*$1, $4); }                       
+//            | IDENTIFIER ASGN '[' GeneralList ']'                       { $$ = new ArrayAssignStmtAST(*$1, $4); }                       
             | IDENTIFIER '[' Expression ']' ASGN Expression             { $$ = new IndexedAssignStmtAST(*$1, $3, $6); }
             | CALL IDENTIFIER                                           { $$ = new ProcCallAST(*$2); }
             | FuncCall                                                  { $$ = new FuncCallStmtAST($1);}
@@ -154,7 +161,7 @@ ConditionalStatement:   IF Condition THEN Statement %prec IFX                   
                         | IF Condition THEN Statement ELSE Statement                { $$ = new IfThenElseAST($2, $4, $6); }
                         ;
 
-LoopStatement:   WHILE Condition DO Statement                                                   { $$ = new WhileStmtAST($2, $4); }                                              
+LoopStatement:   WHILE {newLabel();} Condition DO Statement                                                   { $$ = new WhileStmtAST($3, $5); }                                              
                 | FOR IDENTIFIER UPTO Expression DO Statement                                   { $$ = new ForStmtAST(*$2, $4, 0, $6); }                               
                 | FOR IDENTIFIER DOWNTO Expression DO Statement                                 { $$ = new ForStmtAST(*$2, $4, 1, $6); }
                 | WHILE error {yyerror("Invalid while construct"); yyclearin;} Statement        { $$ = new WhileStmtAST(0, $4);}    
@@ -230,6 +237,10 @@ Expression  :   Expression PLUS Expression                  { $$ = new BinaryExp
 
 void yyerror(std::string s) {
     std::cerr << "line " << yylineno << ": " << s << std::endl;
+}
+
+void newLabel(){
+    labels.push_back(std::to_string(tempVar++));
 }
 
 

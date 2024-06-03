@@ -3,6 +3,8 @@ var a, b;
 begin
     read(a);
     read(b);
-    if a > b then writeline(a);
-    writeline(b);
+    if a > b then 
+        writeline(a)
+    else
+        writeline(b);
 end.

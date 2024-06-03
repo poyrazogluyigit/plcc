@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <iterator>
+#include <map>
 // include order matters, dependencies:
 // stmt -> expr, cond
 // cond -> expr
