@@ -4,12 +4,14 @@ extern std::ofstream output_file;
 
 extern int tempVar;
 
-void ProgramAST::generateCode(){    
+void ProgramAST::generateCode()
+{
     this->code.push_back("; ModuleID = 'calculator'\n");
-    this->code.push_back("declare i32 @printf(i8, ...)\n");
-    this->code.push_back("declare i32 @scanf(i8, ...)\n");
-    this->code.push_back("@read.str = constant [3 x i8] c\"%d\\00\"\n") ;
-    this->code.push_back("@writeline.str = constant [4 x i8] c\"%d\\0A\\00\"\n"); 
+    this->code.push_back("declare i32 @printf(i8*, ...)\n");
+    this->code.push_back("declare i32 @scanf(i8*, ...)\n");
+    this->code.push_back("declare i8 *@calloc(i64, i64)\n");
+    this->code.push_back("@read.str = constant [3 x i8] c\"%d\\00\"\n");
+    this->code.push_back("@writeline.str = constant [4 x i8] c\"%d\\0A\\00\"\n");
     this->code.push_back("@write.str = constant [3 x i8] c\"%d\\00\"\n");
     // append code from block->constDecl
     for (auto &line : this->block->ConstDecl->getCode())
@@ -29,8 +31,10 @@ void ProgramAST::generateCode(){
     this->code.push_back("ret i32 0\n}\n");
 }
 
-void ProgramAST::writeToFile(){
-    for (const auto &e : this->code) output_file << e;
+void ProgramAST::writeToFile()
+{
+    for (const auto &e : this->code)
+        output_file << e;
 }
 
 // std::vector<std::string> BlockAST::getCode(){
@@ -50,31 +54,58 @@ void ProgramAST::writeToFile(){
 //     return code;
 // }
 
-void VarDeclAST::generate(){
+void VarDeclAST::generate()
+{
     std::vector<std::string> varDecls;
     std::stringstream line;
-    for (auto &var : this->identifiers->getIdentifiers()) {
-        line << "%" << var[0] << " = alloca i32\n";
-        this->code.push_back(line.str());
-        line.str(std::string());
+    std::stringstream line2;
+    std::vector<int> sizes = this->identifiers->getSizes();
+    int count = 0;
+    for (auto &var : this->identifiers->getIdentifiers())
+    {
+        if (sizes[count] == 0)
+        {
+            line << "%" << var << " = alloca i32\n";
+            this->code.push_back(line.str());
+            line.str(std::string());
+        }
+        else
+        {
+            line << "%" << var << "_raw = call i8 * @calloc(i64 " << sizes[count] << ", i64 4 )\n";
+            this->code.push_back(line.str());
+            line.str(std::string());
+            line2 << "%" << var << " = bitcast i8* %" << var << "_raw to i32*\n";
+            this->code.push_back(line2.str());
+            line2.str(std::string());
+        }
+
+        count++;
     }
 }
 
-void ConstDeclAST::generate(){
+void ConstDeclAST::generate()
+{
     std::stringstream line;
-    for (auto &var : this->vars) {
+    for (auto &var : this->vars)
+    {
         line << "@" << var->getVar() << " = global i32 " << var->getValue() << "\n";
         this->code.push_back(line.str());
         line.str(std::string());
     }
-    /*
-    for (auto &array : arrays) {
+
+    for (auto &array : arrays)
+    {
         line << "@" << array->var << " = global [" << array->values->values.size() << " x i32] [";
-        for (auto &value : array->values->values) {
-            line << value << ", ";
+        int i = 1;
+        for (auto &value : array->values->values)
+        {
+            if (i == array->values->values.size())
+                line << "i32 " << value;
+            else
+                line << "i32 " << value << ", ";
+            i++;
         }
         line << "]\n";
-        constDecls.push_back(line.str());
+        this->code.push_back(line.str());
     }
-    */
 }

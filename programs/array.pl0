@@ -1,0 +1,46 @@
+const x = 5, array a = [1,2,3]; 
+var t,q,z,y,d 3, f 5;
+
+begin
+    t := 2;
+    d[2] := 4;
+    f[1] := 5;
+    y := f[1];
+    f[1] := 5;
+    q := f[1]; 
+    z := f[1];
+    d[4] := 31;
+    y := d[4];
+    f[2] := d[2];
+    z := f[2];
+    writeline(y);
+    writeline(q);
+    writeline(z);
+    writeline(f[2]);
+    if f[2] > f[1] then 
+        writeline(f[2])
+    else
+        writeline(f[1]);
+    read(q);
+    if q > f[1] then 
+        writeline(q)
+    else
+        writeline(f[1]);
+    read(q);
+    if z > 1 then 
+        writeline(z)
+    else
+        writeline(q);
+    if 1502 > q then 
+        writeline(z)
+    else
+        writeline(q);
+    if z > q then 
+        writeline(z)
+    else
+        writeline(q);
+    if f[2] > q then 
+        writeline(f[2])
+    else
+        writeline(f[1]);
+end.

@@ -11,6 +11,7 @@ std::vector<std::string> labels;
 std::map<std::string, std::string> consts;
 // int yydebug = 1;
 int tempVar = 1;
+int varno = 1;
 %}
 
 %union{
@@ -114,8 +115,10 @@ ArrayDecl:
 ;
 
 IdentifierList: 
-            IDENTIFIER                            { $$ = new IdentListAST(); $$->addToList(*$1);} 
-            | IdentifierList ',' IDENTIFIER       { $1->addToList(*$3); }
+            IDENTIFIER                                      { $$ = new IdentListAST(); $$->addToList(*$1,"0"); }   
+            | IDENTIFIER NUMBER                           { $$ = new IdentListAST(); $$->addToList(*$1,*$2);} 
+            | IdentifierList ',' IDENTIFIER NUMBER      { $1->addToList(*$3,*$4); }
+            | IdentifierList ',' IDENTIFIER             { $1->addToList(*$3,"0"); }
 //            |                                       { std::vector<std::string> ids; $$ = new IdentListAST(ids); }
 ;
 
@@ -255,7 +258,7 @@ int main(int argc, char ** argv){
         std::string optimizationLevel = argv[3];
         std::string inputFile = argv[2];
         std::string outputFilePrefix = "optimized";
-        std::string command = "opt -" + optimizationLevel + " -S " + inputFile + " -o " + inputFile;
+        std::string command = "opt " + optimizationLevel + inputFile + " -o "  + inputFile + " -S ";
         std::cout << command << std::endl;
         int res = system(command.c_str());
         std::cout << res << std::endl;
