@@ -22,8 +22,9 @@ public:
     {
         if (this->isArray)
         {
+            std::string target = consts.find(var1) != consts.end() ? "@" + var1 : "%" + var1;
             // this in constructor
-            this->code.push_back("%" + std::to_string(tempVar) + " = getelementptr i32, i32* %" + var1 + ", i32 " + index1->getNextReg() + "\n");
+            this->code.push_back("%" + std::to_string(tempVar) + " = getelementptr i32, i32* " + target + ", i32 " + index1->getNextReg() + "\n");
             this->setNextReg("%" + std::to_string(++tempVar));
             // aa
             this->code.push_back("%" + std::to_string(tempVar) + "= load i32, i32* %" + std::to_string(tempVar - 1) + "\n");
