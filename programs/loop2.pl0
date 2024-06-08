@@ -1,0 +1,15 @@
+const x = 5;
+
+var y, a 3;
+
+begin
+    y := 0;
+    a[0] := 1;
+    a[1] := 2;   
+    a[2] := 3;
+    while a[0] < a[2] do
+    begin
+        writeline(y);
+        a[0] := a[0] + 1;
+    end
+end.

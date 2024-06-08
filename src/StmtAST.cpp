@@ -37,6 +37,7 @@ IndexedAssignStmtAST::IndexedAssignStmtAST(const std::string &var, ExprAST *inde
     if (this->RHS->isArray == true)
     {
         //%elem1_value = load i32, i32* %elem1_load_ptr
+        // cc
         this->code.push_back("%" + std::to_string(tempVar) + " = getelementptr i32, i32* %" + var + ", i32 " + index->getNextReg() + "\n");
         this->code.push_back("store i32 %" + std::to_string(tempVar - 1) + ", i32* %" + std::to_string(tempVar) + "\n");
         ;
@@ -151,7 +152,7 @@ WhileStmtAST::WhileStmtAST(CondAST *cond, StmtAST *stmt)
     for (auto &line : stmt->getCode())
         this->code.push_back(line);
     this->code.push_back("br label %a" + this->getPrevLabel() + "\na" + stmt->getNextLabel() + ":\n");
-    this->setNextLabel(std::to_string(++tempVar));
+    this->setNextLabel(std::to_string(tempVar + 1));
 }
 
 ArrayAssignStmtAST::ArrayAssignStmtAST(const std::string &var, ListExprAST *RHS) : var(var), RHS(RHS)

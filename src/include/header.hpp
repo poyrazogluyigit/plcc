@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iterator>
 #include <vector>
+#include <cstdlib>
+#include <unistd.h>
 #include <map>
 // include order matters, dependencies:
 // stmt -> expr, cond

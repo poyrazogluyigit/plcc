@@ -7,6 +7,8 @@ begin
     while i < 5 do 
     begin
         d[i] := a[i];
+        writeline(d[i]);
+        i := i+1;
     end;
-    writeline(a[4]);
+    writeline(a[2]);
 end.

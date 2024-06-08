@@ -86,7 +86,7 @@ ConstAssignmentList :
                             $$ = new ConstDeclAST(vars, arrays);
                             }
                         | ARRAY IDENTIFIER EQ  '[' ConstArray ']' {
-                            consts[*$2] = *$2;
+                            consts[*$2] = std::to_string($5->values.size());
                             std::vector<ConstVarAST*> vars; 
                             std::vector<ConstArrayAST*> arrays;
                             arrays.push_back(new ConstArrayAST(*$2, $5));
@@ -97,7 +97,7 @@ ConstAssignmentList :
                             $1->addVar(new ConstVarAST(*$3, *$5));
                         }
                         | ConstAssignmentList ',' ARRAY IDENTIFIER EQ '[' ConstArray ']' {
-                            consts[*$4] = *$4;
+                            consts[*$4] = std::to_string($7->values.size());
                             $1->addArray(new ConstArrayAST(*$4, $7));
                         }
                         ;
@@ -142,7 +142,7 @@ ConstArray: NUMBER                                  { $$ = new ConstArrayValuesA
 
 Statement : 
             IDENTIFIER ASGN Expression                                  { $$ = new SingleAssignStmtAST(*$1, $3); }
-//            | IDENTIFIER ASGN '[' GeneralList ']'                       { $$ = new ArrayAssignStmtAST(*$1, $4); }                       
+           | IDENTIFIER ASGN '[' GeneralList ']'                       { $$ = new ArrayAssignStmtAST(*$1, $4); }                       
             | IDENTIFIER '[' Expression ']' ASGN Expression             { $$ = new IndexedAssignStmtAST(*$1, $3, $6); }
             | CALL IDENTIFIER                                           { $$ = new ProcCallAST(*$2); }
             | FuncCall                                                  { $$ = new FuncCallStmtAST($1);}
@@ -243,24 +243,32 @@ void yyerror(std::string s) {
 }
 
 void newLabel(){
-    labels.push_back(std::to_string(tempVar++));
+    labels.push_back(std::to_string(tempVar+1));
 }
 
 
 int main(int argc, char ** argv){
 
     yyin = fopen(argv[1], "r");
-    output_file = std::ofstream(argv[2]);
+    std::string tmp = std::string(argv[2]) + ".ll";
+    output_file = std::ofstream(tmp.c_str());
     yyparse();
     program->writeToFile();
     fclose(yyin);
-    if(argc == 4){
+    if (argc == 4) {
         std::string optimizationLevel = argv[3];
-        std::string inputFile = argv[2];
-        std::string outputFilePrefix = "optimized";
-        std::string command = "opt " + optimizationLevel + inputFile + " -o "  + inputFile + " -S ";
-        std::cout << command << std::endl;
-        int res = system(command.c_str());
-        std::cout << res << std::endl;
+        std::string inputFile = tmp;
+        std::string outputFilePrefix = argv[2];
+        std::string outputFile = outputFilePrefix + "_optimized.ll";
+        std::string opt = "opt";
+        std::string o = "-o";
+        std::string s = "-S";
+        char* aaa[] = { &opt[0], &optimizationLevel[0], &inputFile[0], &o[0], &outputFile[0], &s[0], nullptr };
+        std::cout << "Executing command: opt " << optimizationLevel << " " << inputFile << " -o " << outputFile << " -S" << std::endl;
+        execvp("opt", aaa);
+        // If execvp returns, it must have failed
+        std::cerr << "Error executing command" << std::endl;
+        return 1;
     }
+    return 0;
 }

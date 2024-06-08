@@ -14,6 +14,7 @@ public:
     bool isArray = false;
     bool isVariable = false;
     bool isImmediate = false;
+    bool isConst = false;
     virtual ~ExprAST() = default;
     // these two are just for a workaround
     std::string var1;
@@ -22,14 +23,31 @@ public:
     {
         if (this->isArray)
         {
-            std::string target = consts.find(var1) != consts.end() ? "@" + var1 : "%" + var1;
-            // this in constructor
-            this->code.push_back("%" + std::to_string(tempVar) + " = getelementptr i32, i32* " + target + ", i32 " + index1->getNextReg() + "\n");
-            this->setNextReg("%" + std::to_string(++tempVar));
-            // aa
-            this->code.push_back("%" + std::to_string(tempVar) + "= load i32, i32* %" + std::to_string(tempVar - 1) + "\n");
-            this->setNextReg("%" + std::to_string(tempVar));
-            tempVar++;
+            std::string target;
+            if (consts.find(var1) != consts.end())
+            {
+                std::string aaaa = consts[var1];
+                target = "@" + var1;
+                // aa
+                this->code.push_back("%" + std::to_string(tempVar) + " = getelementptr [" + aaaa + " x i32], [" + aaaa + " x i32]* " + target + ", i32 0, i32 " + index1->getNextReg() + "\n");
+                this->setNextReg("%" + std::to_string(++tempVar));
+                // aa
+                this->code.push_back("%" + std::to_string(tempVar) + "= load i32, i32* %" + std::to_string(tempVar - 1) + "\n");
+                this->setNextReg("%" + std::to_string(tempVar));
+                tempVar++;
+            }
+            else
+            {
+                target = "%" + var1;
+                // bb
+                this->code.push_back("%" + std::to_string(tempVar) + " = getelementptr i32, i32* " + target + ", i32 " + index1->getNextReg() + "\n");
+                this->setNextReg("%" + std::to_string(++tempVar));
+                // aa
+                this->code.push_back("%" + std::to_string(tempVar) + "= load i32, i32* %" + std::to_string(tempVar - 1) + "\n");
+                this->setNextReg("%" + std::to_string(tempVar));
+                tempVar++;
+            }
+
             return code;
         }
         else
@@ -100,6 +118,8 @@ public:
     ExprAST *index;
     ArrayVarExprAST(const std::string &var, ExprAST *index) : var(var), index(index)
     {
+        for (auto &line : index->getCode())
+            this->code.push_back(line);
         this->isArray = true;
         this->var1 = var;
         this->index1 = index;

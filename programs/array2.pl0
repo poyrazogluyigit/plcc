@@ -1,0 +1,10 @@
+const x = 5, array a = [1,2,3]; 
+var q,z,y,d 3, f 5;
+
+begin
+    d := [1,2,3];
+    writeline(d[0]);
+    writeline(d[1]);
+    writeline(d[2]);
+    writeline(a[2]);
+end.

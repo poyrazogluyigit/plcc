@@ -35,6 +35,7 @@ void ProgramAST::writeToFile()
 {
     for (const auto &e : this->code)
         output_file << e;
+    output_file << std::flush;
 }
 
 // std::vector<std::string> BlockAST::getCode(){
