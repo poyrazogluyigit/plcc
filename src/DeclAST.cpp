@@ -19,8 +19,8 @@ void ProgramAST::generateCode()
     // append code from block->funcDecl and block->procDecl
     // for (auto &line : this->block->FuncDecl->getCode())
     //     this->code.push_back(std::move(line));
-    // for (auto &line : this->block->ProcDecl->getCode())
-    //     this->code.push_back(std::move(line));
+    for (auto &line : this->block->ProcDecl->getCode())
+        this->code.push_back(std::move(line));
     this->code.push_back("\ndefine i32 @main() {\n");
     for (auto &line : this->block->VarDecl->getCode())
         this->code.push_back(std::move(line));
@@ -107,5 +107,23 @@ void ConstDeclAST::generate()
         }
         line << "]\n";
         this->code.push_back(line.str());
+    }
+}
+
+void ProcDeclAST::generate()
+{
+    std::stringstream line;
+    for (auto &proc : this->procs)
+    {
+        line << "define void @" << proc->name << "() {\n";
+        this->code.push_back(line.str());
+        line.str(std::string());
+        for (auto &line : proc->body->VarDecl->getCode())
+            this->code.push_back(std::move(line));
+        for (auto &line : proc->body->ArrayDecl->getCode())
+            this->code.push_back(std::move(line));
+        for (auto &line : proc->body->Statement->getCode())
+            this->code.push_back(std::move(line));
+        this->code.push_back("ret void\n}\n");
     }
 }

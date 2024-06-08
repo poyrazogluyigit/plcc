@@ -3,6 +3,7 @@
 
 class ExprAST;
 class CondAST;
+class ListExprAST;
 
 extern std::vector<std::string> labels;
 
@@ -74,7 +75,7 @@ class ArrayAssignStmtAST : public StmtAST
     ExprAST *RHS;
 
 public:
-    ArrayAssignStmtAST(const std::string &var, ExprAST *RHS) : var(var), RHS(RHS) {}
+    ArrayAssignStmtAST(const std::string &var, ListExprAST *RHS);
 };
 
 class ProcCallAST : public StmtAST

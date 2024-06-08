@@ -86,7 +86,14 @@ IOStmtAST::IOStmtAST(int op, ExprAST *expr)
             this->code.push_back("call i32 (i8*, ...) @printf(i8* getelementptr ([3 x i8], [3 x i8]* @write.str, i32 0, i32 0), i32 " + expr->getNextReg() + ")\n");
         else if (op == 2)
             this->code.push_back("call i32 (i8*, ...) @printf(i8* getelementptr ([4 x i8], [4 x i8]* @writeline.str, i32 0, i32 0), i32 " + expr->getNextReg() + ")\n");
-        this->setNextLabel(std::to_string(tempVar++));
+        if (expr->isImmediate == false)
+        {
+            this->setNextLabel(std::to_string(tempVar++));
+        }
+        else
+        {
+            this->setNextLabel(std::to_string(++tempVar));
+        }
     }
 }
 
@@ -134,15 +141,29 @@ IfThenElseAST::IfThenElseAST(CondAST *cond, StmtAST *thenStmt, StmtAST *elseStmt
 WhileStmtAST::WhileStmtAST(CondAST *cond, StmtAST *stmt)
     : cond(cond), stmt(stmt)
 {
-    this->code.push_back("br label %" + cond->getTrueLabel() + "\n");
+    this->code.push_back("br label %a" + cond->getTrueLabel() + "\n");
     this->setPrevLabel();
-    this->code.push_back(this->getPrevLabel() + ":\n");
+    this->code.push_back("a" + this->getPrevLabel() + ":\n");
     for (auto &line : cond->getCode())
         this->code.push_back(line);
-    this->code.push_back("br i1 " + cond->getNextReg() + ", label %" + cond->getTrueLabel() + ", label %" + stmt->getNextLabel() + "\n");
-    this->code.push_back(cond->getTrueLabel() + ":\n");
+    this->code.push_back("br i1 " + cond->getNextReg() + ", label %a" + cond->getTrueLabel() + ", label %a" + stmt->getNextLabel() + "\n");
+    this->code.push_back("a" + cond->getTrueLabel() + ":\n");
     for (auto &line : stmt->getCode())
         this->code.push_back(line);
-    this->code.push_back("br label %" + this->getPrevLabel() + "\n" + stmt->getNextLabel() + ":\n");
+    this->code.push_back("br label %a" + this->getPrevLabel() + "\na" + stmt->getNextLabel() + ":\n");
     this->setNextLabel(std::to_string(++tempVar));
+}
+
+ArrayAssignStmtAST::ArrayAssignStmtAST(const std::string &var, ListExprAST *RHS) : var(var), RHS(RHS)
+{
+    int i = 0;
+    for (auto &line : RHS->getExprs())
+    {
+        for (auto &line2 : line->getCode())
+            this->code.push_back(line2);
+        this->code.push_back("%" + std::to_string(tempVar) + " = getelementptr i32, i32* %" + var + ", i32 " + std::to_string(i++) + "\n");
+        this->code.push_back("store i32 " + line->getNextReg() + ", i32* %" + std::to_string(tempVar) + "\n");
+        this->setNextReg("%" + std::to_string(tempVar));
+        this->setNextLabel(std::to_string(tempVar++));
+    }
 }

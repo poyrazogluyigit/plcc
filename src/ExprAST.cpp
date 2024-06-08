@@ -21,13 +21,14 @@ BinaryExprAST::BinaryExprAST(std::string op, ExprAST *LHS, ExprAST *RHS)
     : op(op), LHS(LHS), RHS(RHS)
 {
     // get target registers
-    std::string left = this->LHS->getNextReg();
-    std::string right = this->RHS->getNextReg();
+
     // concat codes
     for (auto &line : this->LHS->getCode())
         this->code.push_back(line);
+    std::string left = this->LHS->getNextReg();
     for (auto &line : this->RHS->getCode())
         this->code.push_back(line);
+    std::string right = this->RHS->getNextReg();
     // generate code for operation
     std::stringstream line;
     line << "%" << tempVar << " = " << this->op << " i32 " << left << ", " << right << "\n";

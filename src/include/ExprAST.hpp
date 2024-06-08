@@ -13,6 +13,7 @@ protected:
 public:
     bool isArray = false;
     bool isVariable = false;
+    bool isImmediate = false;
     virtual ~ExprAST() = default;
     // these two are just for a workaround
     std::string var1;
@@ -111,7 +112,11 @@ class NumberExprAST : public ExprAST
     std::string val;
 
 public:
-    NumberExprAST(std::string &val) : val(val) { this->setNextReg(val); }
+    NumberExprAST(std::string &val) : val(val)
+    {
+        this->setNextReg(val);
+        this->isImmediate = true;
+    }
     std::string codeGen();
 };
 
@@ -124,5 +129,9 @@ public:
     void addToList(ExprAST *expr)
     {
         exprs.push_back(expr);
+    }
+    std::vector<ExprAST *> getExprs()
+    {
+        return exprs;
     }
 };

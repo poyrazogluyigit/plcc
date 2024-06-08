@@ -121,10 +121,10 @@ class BlockAST;
 
 class ProcDeclMonoAST : public DeclAST
 {
-    std::string name;
-    BlockAST *body;
 
 public:
+    std::string name;
+    BlockAST *body;
     ProcDeclMonoAST(std::string &name, BlockAST *body) : name(name), body(body) {}
 };
 
@@ -141,6 +141,7 @@ public:
     {
         return code;
     }
+    void generate();
 };
 
 class FuncDeclMonoAST : public DeclAST
